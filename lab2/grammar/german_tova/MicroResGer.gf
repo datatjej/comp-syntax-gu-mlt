@@ -8,7 +8,8 @@ param
   Article = Der | Die | Das | Den | Dem | Des ;
 
   -- Agreement = Agr Number ; ---s Person to be added
-  Agreement = Agr Gender Number Person ;
+  -- Agreement = Agr Gender Number Person ;
+   Agreement = Agr Number Person ;
 
   -- all forms of normal Eng verbs, although not yet used in MiniGrammar
   -- VForm = Inf | PresSg3 | Past | PastPart | PresPart ; 
@@ -20,6 +21,8 @@ param
 oper
   -- define types:
   Noun : Type = {s : Number => Str ; g : Gender ; c : Case} ;
+
+  --aarne: lincat N  = {s : Number => Case => Str ; g : Gender} ;
   -- Noun : Type = {s : Number => Str ; g : Gender } ;
 
   mkNoun : (sg, pl : Str) -> Gender -> Case -> Noun = \sg, pl, gender, cas -> {
@@ -58,9 +61,61 @@ oper
 	--oregelbundna: Kind(er)
 	--ingen ändring: Computer, Feuer, Mädchen, Wasser
 
-  Adjective : Type = {s : Str} ;
+  -- Adjective : Type = {s : Str} ;
+  -- Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
+
+  Adjective : Type = {s : Gender => Number => Str} ;
+
+
+  -- mkAdjective : (femSg, femPl, neutSg, neutPl, mascSg, mascPl : Str) -> Adjective =
+  mkAdjective : (_, _, _, _, _, _ : Str) -> Adjective =
+      \femSg, femPl, neutSg, neutPl, mascSg, mascPl ->
+      {
+	s = table {
+	  Fem => 
+	    table {
+	      Sg => femSg ;
+	      Pl => femPl 
+	    } ;
+      Neut =>
+      table {
+        Sg => neutSg ;
+        Pl => neutPl
+      } ;
+	  Masc =>
+	    table {
+	      Sg => mascSg ;
+	      Pl => mascPl
+	    }
+	  } 
+      } ;
+
+
+    -- herbert
+    --smartAdjective : Str -> Adjective =
+    --\sg ->
+    --case sg of {
+	  --italian + "o" => mkAdjective (italian + "a") (italian + "e") sg (italian + "i") False ;
+	  --grand + "e" => mkAdjective sg (grand + "i") sg sg False
+	  -- _ =>  error ("No smarts for adjectives here: " ++ sg)
+  --} ;
+
+  regAdj : Str -> Adjective = \mascSg -> mkAdjective mascSg (mascSg + "e") (mascSg + "s") (mascSg + "es") (mascSg + "es") (mascSg + "es") ;
+  
+   smartAdjective : Str -> Adjective = \mascSg -> case mascSg of {
+  	gran + "d"					=> regAdj mascSg ;
+	  roug + "e"					=> mkAdjective mascSg (roug + "es") (roug + "es") (roug + "es") (roug + "es") (roug + "es");
+	  mauvai + "s"				=> mkAdjective mascSg (mauvai + "se") (mauvai + "ses") (mauvai + "ses") (mauvai + "ses") (mauvai + "ses") ;
+	  b + "on"					=> mkAdjective mascSg (b + "onne") (b + "ons") (b + "onnes") (b + "onnes") (b + "onnes");
+	  anci + "en"					=> mkAdjective mascSg (anci + "enne") (anci + "ens") (anci + "ennes") (anci + "ens") (anci + "ennes");
+	  nouv + "eau"				=> mkAdjective mascSg (nouv + "elle") (nouv + "eaux") (nouv + "elles") (nouv + "eaux") (nouv + "elles");
+	  _	                        => regAdj mascSg
+  } ;
+	
 
   Verb : Type = {s : VForm => Str} ;
+  -- two-place verb with "case" as preposition; for transitive verbs, c=[]
+  Verb2 : Type = Verb ** {c : Gender => Number => Str} ;
 
   mkVerb : (inf, sg1, sg2, sg3, pl1, pl2, pl3: Str) -> Verb
     = \inf,sg1,sg2,sg3,pl1, pl2, pl3 -> {
@@ -75,37 +130,47 @@ oper
       }
     } ;
 
-  -- regVerb : (inf: Str) -> Verb = \inf ->
-  --  mkVerb inf (inf + "s") (inf + "ed") (inf + "ed") (inf + "ing") ;
+  regVerb : (inf: Str) -> Verb = \inf ->
+    mkVerb inf (inf + "s") (inf + "ed") (inf + "ed") (inf + "ing") (inf + "ing") (inf + "ing")  ;
 
   -- regular verbs with predictable variations
-  --smartVerb : Str -> Verb = \inf -> case inf of {
-  --   pl  +  ("a"|"e"|"i"|"o"|"u") + "y" => regVerb inf ;
-  --   cr  +  "y" =>  mkVerb inf (cr + "ies") (cr + "ied") (cr + "ied") (inf + "ing") ;
-  --   lov + "e"  => mkVerb inf (inf + "s") (lov + "ed") (lov + "ed") (lov + "ing") ;
-  --   kis + ("s"|"sh"|"x"|"o") => mkVerb inf (inf + "es") (inf + "ed") (inf + "ed") (inf + "ing") ;
-  --   _ => regVerb inf
-  --   } ;
+  smartVerb : Str -> Verb = \inf -> case inf of {
+     pl  +  ("a"|"e"|"i"|"o"|"u") + "y" => regVerb inf ;
+     cr  +  "y" =>  mkVerb inf (cr + "ies") (cr + "ied") (cr + "ied") (inf + "ing") (inf + "ing") (inf + "ing")  ;
+    lov + "e"  => mkVerb inf (inf + "s") (lov + "ed") (lov + "ed") (lov + "ing") (inf + "ing") (inf + "ing") ;
+     kis + ("s"|"sh"|"x"|"o") => mkVerb inf (inf + "es") (inf + "ed") (inf + "ed") (inf + "ing") (inf + "ing") (inf + "ing") ;
+     _ => regVerb inf
+     } ;
 
 
 
   -- normal irregular verbs e.g. drink,drank,drunk
-  --irregVerb : (inf,past,pastpart : Str) -> Verb =
+  -- irregVerb : (inf,past,pastpart : Str) -> Verb =
   --  \inf,past,pastpart ->
   --    let verb = smartVerb inf
   --    in mkVerb inf (verb.s ! PresSg3) past pastpart (verb.s ! PresPart) ;   
 
-  -- two-place verb with "case" as preposition; for transitive verbs, c=[]
-  Verb2 : Type = Verb ** {c : Str} ;
+  irregVerb : (inf,sg1,sg2,sg3,pl1,pl2,pl3 : Str) -> Verb =
+    \inf,sg1,sg2,sg3,pl1,pl2,pl3 ->
+      let verb = smartVerb inf 
+	  in mkVerb inf sg1 sg2 sg3 pl1 pl2 pl3 ;
+
+
 
   -- be_Verb : Verb = mkVerb "are" "is" "was" "been" "being" ; ---s to be generalized
   be_Verb : Verb = mkVerb "sein" "bin" "sind" "bist" "seid" "ist" "sind" ; ---s to be generalized
 
+-- juls
+  -- agr2vform : Number -> VForm = \a -> case a of {
+  --   Sg => Pres Sg P3 ;
+  --   Pl => Pres Pl P3  
+  --   } ;
 
 ---s a very simplified verb agreement function for Micro
---  agr2vform : Agreement -> VForm = \a -> case a of {
---    Agr Sg => PresSg3 ;
---    Agr Pl => Inf
---    } ;
+-- agr2vform : Agreement -> VForm = \a -> case a of {
+--   Agr Sg => Pres P2 P3 ;
+--   Agr Pl => Pres P1 P3
+--   Agr 
+--   } ;
 
 }
