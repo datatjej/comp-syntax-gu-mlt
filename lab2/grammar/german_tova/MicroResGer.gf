@@ -5,7 +5,9 @@ param
   Case = Nom | Acc | Dat | Gen ;
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
-  Article = Der | Die | Das | Den | Dem | Des ;
+  -- Article = Der | Die | Das | Den | Dem | Des ;
+  NounForm = NF Number Case ; -- p. 94 course notes
+  -- DetForm = DF Number Case ;
 
   -- Agreement = Agr Number ; ---s Person to be added
   -- Agreement = Agr Gender Number Person ;
@@ -19,29 +21,92 @@ param
   Aux = haben | sein ;
   
 oper
-  -- define types:
-  Noun : Type = {s : Number => Str ; g : Gender ; c : Case} ;
+  --  define types:
+  --  Noun : Type = {s : Number => Str ; g : Gender ; c : Case} ;
+  -- aarne: Noun = {s : Number => Case => Str ; g : Gender} ;
+  -- NP = {s : NPForm => Str ; a : Agr ; isPron : Bool} ;  ResEst.gf https://tinyurl.com/yffeccdf
+  Noun: Type = {s : NounForm => Str; g : Gender};
 
-  --aarne: lincat N  = {s : Number => Case => Str ; g : Gender} ;
-  -- Noun : Type = {s : Number => Str ; g : Gender } ;
+  -- put in MicroLang:
+  -- mkNoun = overload {
+  -- mkNoun : (word : Str) -> Noun = makeNoun;
+  -- mkN : (nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl : Str) -> Gender -> Noun = mkWorstN
+  -- };
 
-  mkNoun : (sg, pl : Str) -> Gender -> Case -> Noun = \sg, pl, gender, cas -> {
-     s = table { Sg => sg ; Pl => pl } ;
-     g = gender ;
-	   c = cas
-     } ;
+  makeNoun : Str -> Noun = \word ->
+    case word of {
+      stem + "а"         => mkFemN stem;
+      stem + ("о" | "е") => mkNeutN word;
+      _                  => mkMascN word };
 
-  regNoun : Str -> Noun = 
-    \sg -> mkNoun sg (sg + "e") Fem Nom;
+mkMascN : Str -> Noun = \mann ->
+      { s = table {
+          NF Sg Nom         => mann;
+          NF Sg Acc         => mann;
+          NF Sg Dat         => mann;
+          NF Sg Gen         => mann + "es";
+          NF Pl Nom         => mann + "er"; --??
+          NF Pl Acc         => mann + "er" ; --??
+          NF Pl Dat         => mann + "ern"; --??
+          NF Pl Gen         => mann + "er"}; --??
+      g = Masc };
 
-  smartNoun : Str -> Noun = \sg -> case sg of {
-    _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Nom;
-    _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Dat;
-    _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Gen;
-	  _ + "e"					        => mkNoun sg (sg + "n") Masc Nom;
-    _ + "o"   				      => mkNoun sg (sg + "s") Neut Nom;
-	   _ + ("chen"|"er")      => mkNoun sg sg Fem Nom -- Don't add anything to these nouns, because Pl = Sg
-  } ;
+mkFemN : Str -> Noun = \frau ->
+      { s = table {
+          NF Sg Nom         => frau;
+          NF Sg Acc         => frau;
+          NF Sg Dat         => frau;
+          NF Sg Gen         => frau;
+          NF Pl Nom         => frau + "en"; --??
+          NF Pl Acc         => frau + "en" ; --??
+          NF Pl Dat         => frau + "en"; --??
+          NF Pl Gen         => frau + "en"}; --??
+      g = Fem };
+  
+mkNeutN : Str -> Noun = \kind ->
+      { s = table {
+          NF Sg Nom         => kind;
+          NF Sg Acc         => kind;
+          NF Sg Dat         => kind;
+          NF Sg Gen         => kind + "es";
+          NF Pl Nom         => kind + "er"; --??
+          NF Pl Acc         => kind + "er"; --??
+          NF Pl Dat         => kind + "ern"; --??
+          NF Pl Gen         => kind + "er"}; --??
+      g = Neut };
+  
+  mkWorstN  : (nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl : Str) -> Gender -> Noun
+    =  \nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl, g ->
+   {
+     s = table {
+           NF Sg Nom     => nomSg;
+           NF Sg Acc     => accSg;
+           NF Sg Dat     => datSg;
+           NF Sg Gen     => genSg;
+           NF Pl Nom     => nomPl;
+           NF Pl Acc     => accPl;
+           NF Pl Dat     => datPl;
+           NF Pl Gen     => genPl};
+     g = g };
+
+  -- mkNoun : (sg, pl : Str) -> Gender -> Case -> Noun = \sg, pl, gender, cas -> {
+  --   s = table { Sg => sg ; Pl => pl } ;
+  --   g = gender ;
+	--   c = cas
+  --   } ;
+
+
+  -- regNoun : Str -> Noun = 
+  --  \sg -> mkNoun sg (sg + "e") Fem Nom;
+
+  -- smartNoun : Str -> Noun = \sg -> case sg of {
+  --  _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Nom;
+  --  _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Dat;
+  --  _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Gen;
+	--  _ + "e"					        => mkNoun sg (sg + "n") Masc Nom;
+  --  _ + "o"   				      => mkNoun sg (sg + "s") Neut Nom;
+	--   _ + ("chen"|"er")      => mkNoun sg sg Fem Nom -- Don't add anything to these nouns, because Pl = Sg
+  -- } ;
 	
   -- smart paradigm
   --smartNoun : Str -> Noun = \sg -> case sg of {

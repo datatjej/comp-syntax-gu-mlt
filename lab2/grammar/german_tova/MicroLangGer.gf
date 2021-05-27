@@ -20,7 +20,14 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     -- Pron = {s : Case => Str} ; -- a : Agreement} ;
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     -- Det = {s : Str ; n : Number} ;
-    Det = {s : Gender => Str ; n : Number} ; --herbert
+    -- herbert: Det = {s : Gender => Str ; n : Number} ;
+    
+
+    Det : Type = {
+      s : DetForm => Str;
+      n : Number;
+      g : PronGen };
+
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ; --transitive? 
@@ -97,7 +104,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     DetCN det cn = {
     s = \\c => cn.s ! det.n ;
     det = det.s ! cn.g ;
-    n = det.n ;
+    nf = det.n ;
     g = cn.g ;
     isPron = False 
     } ;
@@ -322,12 +329,18 @@ oper
   --    = \sg,pl -> lin N (mkNoun sg pl) ;
   --  } ;
 
-   mkN =  overload {
-    mkN : Str -> N   -- predictable noun
-      = \n -> lin N (smartNoun n) ;
-    mkN : Str -> Str -> Gender -> Case -> N  -- irregular noun
-      = \sg,pl,g,c -> lin N (mkNoun sg pl g c) ;
-    } ;
+   -- mkN =  overload {
+   -- mkN : Str -> N   -- predictable noun
+   --   = \n -> lin N (smartNoun n) ;
+   -- mkN : Str -> Str -> Gender -> Case -> N  -- irregular noun
+   --   = \sg,pl,g,c -> lin N (mkNoun sg pl g c) ;
+  --  } ;
+
+  -- put in MicroLang:
+  mkN = overload {
+  mkN : (word : Str) -> Noun = makeNoun;
+  mkN : (nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl : Str) -> Gender -> Noun = mkWorstN
+  };
 
   -- mkA : Str -> A
   --  = \s -> lin A {s = s} ;
