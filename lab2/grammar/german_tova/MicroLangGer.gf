@@ -88,9 +88,9 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
     -- DetForm = DF Gender Case Number;
     -- NounForm = NF Number Case ;
-
    
    UsePron p = p ** { det = "" ; isPron = True } ;
+            
             
     -- a_Det = {s = pre {"a"|"e"|"i"|"o" => "an" ; _ => "a"} ; n = Sg ; g = Masc} ;   --- a/an can get wrong
 
