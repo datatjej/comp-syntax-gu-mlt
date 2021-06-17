@@ -5,39 +5,42 @@ param
   Case = Nom | Acc | Dat | Gen ;
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
-  -- Article = Der | Die | Das | Den | Dem | Des ;
   NounForm = NF Number Case ; -- p. 94 course notes
-  -- DetForm = DF Number Case ;
+  DetForm = DF Gender Case Number;
 
-  -- Agreement = Agr Number ; ---s Person to be added
-  -- Agreement = Agr Gender Number Person ;
-   Agreement = Agr Number Person ;
-
-  -- all forms of normal Eng verbs, although not yet used in MiniGrammar
-  -- VForm = Inf | PresSg3 | Past | PastPart | PresPart ; 
-  
+  -- Agreement = Agr Number Person ;
   VForm = Inf | Pres Number Person ;
   VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
   
+  
 oper
   --  define types:
-  --  Noun : Type = {s : Number => Str ; g : Gender ; c : Case} ;
-  -- aarne: Noun = {s : Number => Case => Str ; g : Gender} ;
-  -- NP = {s : NPForm => Str ; a : Agr ; isPron : Bool} ;  ResEst.gf https://tinyurl.com/yffeccdf
   Noun: Type = {s : NounForm => Str; g : Gender};
-
-  -- put in MicroLang:
-  -- mkNoun = overload {
-  -- mkNoun : (word : Str) -> Noun = makeNoun;
-  -- mkN : (nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl : Str) -> Gender -> Noun = mkWorstN
-  -- };
-
-  makeNoun : Str -> Noun = \word ->
-    case word of {
-      stem + "а"         => mkFemN stem;
-      stem + ("о" | "е") => mkNeutN word;
-      _                  => mkMascN word };
+  Determiner: Type = {s: DetForm => Str};
+  
+  
+mkDet : DetForm -> Determiner = \df -> {
+      s = table {
+        DF Fem (Nom | Acc) Sg => "die";
+        DF Fem (Gen | Dat) Sg => "der";
+        DF Masc Nom Sg => "der";
+        DF Masc Acc Sg => "den";
+        DF (Masc | Neut) Dat Sg => "dem";
+        DF (Masc | Neut) Gen Sg => "des";
+        DF Neut (Nom | Acc) Sg => "das";
+        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "die" ;
+        DF (Fem | Masc | Neut) Dat Pl => "den" ;
+        DF (Fem | Masc | Neut) Gen Pl => "der"
+      };
+    };
+    
+-- TODO: make gender the deciding factor for which function to use
+makeNoun : Str -> Noun = \word ->
+  case word of {
+    stem + "а"         => mkFemN stem;
+    stem + ("о" | "е") => mkNeutN word;
+      _                 => mkMascN word };
 
 mkMascN : Str -> Noun = \mann ->
       { s = table {
@@ -155,23 +158,21 @@ mkNeutN : Str -> Noun = \kind ->
 	  } 
       } ;
 
-
     -- herbert
-    --smartAdjective : Str -> Adjective =
-    --\sg ->
-    --case sg of {
-	  --italian + "o" => mkAdjective (italian + "a") (italian + "e") sg (italian + "i") False ;
-	  --grand + "e" => mkAdjective sg (grand + "i") sg sg False
-	  -- _ =>  error ("No smarts for adjectives here: " ++ sg)
-  --} ;
+    -- smartAdjective : Str -> Adjective =
+    -- \sg ->
+    -- case sg of {
+	  -- italian + "o" => mkAdjective (italian + "a") (italian + "e") sg (italian + "i") False ;
+	  -- grand + "e" => mkAdjective sg (grand + "i") sg sg False
+	  --_ =>  error ("No smarts for adjectives here: " ++ sg)
+    --} ;
 
   regAdj : Str -> Adjective = \mascSg -> mkAdjective mascSg (mascSg + "e") (mascSg + "s") (mascSg + "es") (mascSg + "es") (mascSg + "es") ;
-  
    smartAdjective : Str -> Adjective = \mascSg -> case mascSg of {
   	gran + "d"					=> regAdj mascSg ;
 	  roug + "e"					=> mkAdjective mascSg (roug + "es") (roug + "es") (roug + "es") (roug + "es") (roug + "es");
 	  mauvai + "s"				=> mkAdjective mascSg (mauvai + "se") (mauvai + "ses") (mauvai + "ses") (mauvai + "ses") (mauvai + "ses") ;
-	  b + "on"					=> mkAdjective mascSg (b + "onne") (b + "ons") (b + "onnes") (b + "onnes") (b + "onnes");
+	  b + "on"					  => mkAdjective mascSg (b + "onne") (b + "ons") (b + "onnes") (b + "onnes") (b + "onnes");
 	  anci + "en"					=> mkAdjective mascSg (anci + "enne") (anci + "ens") (anci + "ennes") (anci + "ens") (anci + "ennes");
 	  nouv + "eau"				=> mkAdjective mascSg (nouv + "elle") (nouv + "eaux") (nouv + "elles") (nouv + "eaux") (nouv + "elles");
 	  _	                        => regAdj mascSg
@@ -200,14 +201,12 @@ mkNeutN : Str -> Noun = \kind ->
 
   -- regular verbs with predictable variations
   smartVerb : Str -> Verb = \inf -> case inf of {
-     pl  +  ("a"|"e"|"i"|"o"|"u") + "y" => regVerb inf ;
-     cr  +  "y" =>  mkVerb inf (cr + "ies") (cr + "ied") (cr + "ied") (inf + "ing") (inf + "ing") (inf + "ing")  ;
+    pl +  ("a"|"e"|"i"|"o"|"u") + "y" => regVerb inf ;
+    cr +  "y" =>  mkVerb inf (cr + "ies") (cr + "ied") (cr + "ied") (inf + "ing") (inf + "ing") (inf + "ing")  ;
     lov + "e"  => mkVerb inf (inf + "s") (lov + "ed") (lov + "ed") (lov + "ing") (inf + "ing") (inf + "ing") ;
-     kis + ("s"|"sh"|"x"|"o") => mkVerb inf (inf + "es") (inf + "ed") (inf + "ed") (inf + "ing") (inf + "ing") (inf + "ing") ;
-     _ => regVerb inf
-     } ;
-
-
+    kis + ("s"|"sh"|"x"|"o") => mkVerb inf (inf + "es") (inf + "ed") (inf + "ed") (inf + "ing") (inf + "ing") (inf + "ing") ;
+    _ => regVerb inf
+  } ;
 
   -- normal irregular verbs e.g. drink,drank,drunk
   -- irregVerb : (inf,past,pastpart : Str) -> Verb =
@@ -219,8 +218,6 @@ mkNeutN : Str -> Noun = \kind ->
     \inf,sg1,sg2,sg3,pl1,pl2,pl3 ->
       let verb = smartVerb inf 
 	  in mkVerb inf sg1 sg2 sg3 pl1 pl2 pl3 ;
-
-
 
   -- be_Verb : Verb = mkVerb "are" "is" "was" "been" "being" ; ---s to be generalized
   be_Verb : Verb = mkVerb "sein" "bin" "sind" "bist" "seid" "ist" "sind" ; ---s to be generalized

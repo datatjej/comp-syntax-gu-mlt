@@ -9,25 +9,13 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Utt = {s : Str} ;
     
     S  = {s : Str} ;
-    --VP = {verb : Verb ; compl : Str} ; ---s special case of Mini
-     VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --herbert
+    VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --hl
     Comp = Adjective;
     AP = Adjective ;
     CN = Noun ;
-    -- NP = {s : Case => Str} ; -- ; a : Agreement} ; english
-    NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- herbert
-    -- NP = {s : Case => Str ; n : Number; p : Person ; g : Gender; isPron : Bool};
-    -- Pron = {s : Case => Str} ; -- a : Agreement} ;
+    NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
-    -- Det = {s : Str ; n : Number} ;
-    -- herbert: Det = {s : Gender => Str ; n : Number} ;
-    
-
-    Det : Type = {
-      s : DetForm => Str;
-      n : Number;
-      g : PronGen };
-
+    Det = Determiner ;
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ; --transitive? 
@@ -38,10 +26,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
   lin
     UttS s = s ;
     UttNP np = {s = np.s ! Acc} ;
-
-   -- PredVPS np vp = {
-   --   s = np.s ! Nom ++ vp.verb.s -- ! agr2vform np.a ++ vp.compl
-   --   } ;
 
     PredVPS np vp = { -- vad är det här? 
     s = case np.isPron of {
@@ -96,105 +80,84 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     AdvVP vp adv =
     vp ** {compl = \\g,n => vp.compl ! g ! n ++ adv.s} ;  
       
-    --DetCN det cn = {
-    --  s = \\c => det.s ++ cn.s ! det.n ;
-    --  a = Agr det.n ;
-    --  } ;
 
     DetCN det cn = {
-    s = \\c => cn.s ! det.n ;
-    det = det.s ! cn.g ;
-    nf = det.n ;
-    g = cn.g ;
-    isPron = False 
+    s = \\c,n => det.s ! (DF cn.g c n) ++ cn.s ! (NF n c);
+    g = cn.g
     } ;
-      
-    UsePron p = p ** { det = "" ; isPron = True } ;
+
+    -- DetForm = DF Gender Case Number;
+    -- NounForm = NF Number Case ;
+
+   
+   UsePron p = p ** { det = "" ; isPron = True } ;
             
     -- a_Det = {s = pre {"a"|"e"|"i"|"o" => "an" ; _ => "a"} ; n = Sg ; g = Masc} ;   --- a/an can get wrong
 
    a_Det = {s = table {
-		   Fem => "eine" ;
-       Neut => "ein";
-		   Masc => "ein" 
-      };
-		  n = Sg
-      } ;
+		    DF Fem (Nom | Acc) Sg => "eine";
+        DF Fem (Gen | Dat) Sg => "einer";
+        DF Masc Nom Sg => "ein";
+        DF Masc Acc Sg => "einen";
+        DF (Masc | Neut) Dat Sg => "einem";
+        DF (Masc | Neut) Gen Sg => "eines";
+        DF Neut (Nom | Acc) Sg => "ein";
+        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "";
+        DF (Fem | Masc | Neut) Dat Pl => "";
+        DF (Fem | Masc | Neut) Gen Pl => ""
+    }
+    };
 
-    -- a_Det = {s = table {
-	  --     Masc => pre {
-		-- "sb"|"sc"|"sd"|"sf"|"sg"|"sh"|"sk"|"sl"|"sm"|"sn"|"sp"|"sq"|"sr"|"st"|"sz"|"gn"|"pn"|"ps"|"z" => "uno" ;
-		-- _ => "un"};
-	  --     Fem => "una" 
-	  --     } ;
-	  --     n = Sg} ; --- uno can get wrong
-    
     aPl_Det = {s = table {
-		Fem => "" ;
-    Neut => "";
-		Masc => "" 
-      };
-		n = Pl
-    } ;
-
-    -- aPl_Det = {s = "" ; n = Pl} ; original
-    
-    -- the_Det = {s = "the" ; n = Sg ; } ; original 
+		 _ => ""
+    }
+    };
 
     the_Det = {s = table {
-        Fem => pre {
-          "a"|"e"|"i"|"o"|"u" => "l'" ++ BIND ;
-          _ => "la"
-          } ;
-        Masc => pre {
-          "a"|"e"|"i"|"o"|"u" => "l'" ++ BIND ;
-          "sb"|"sc"|"sd"|"sf"|"sg"|"sh"|"sk"|"sl"|"sm"|"sn"|"sp"|"sq"|"sr"|"st"|"sz"|"gn"|"pn"|"ps"|"z" => "lo" ;
-          _ => "il"
-          } ;
-        Neut => pre {
-          "a"|"e"|"i"|"o"|"u" => "l'" ++ BIND ;
-          "sb"|"sc"|"sd"|"sf"|"sg"|"sh"|"sk"|"sl"|"sm"|"sn"|"sp"|"sq"|"sr"|"st"|"sz"|"gn"|"pn"|"ps"|"z" => "lo" ;
-          _ => "das"
-          }
-        } ;
-            n = Sg} ; --- lo can get wrong
-
-    -- thePl_Det = {s = "the" ; n = Pl} ; original
+       DF Fem (Nom | Acc) Sg => "die";
+        DF Fem (Gen | Dat) Sg => "der";
+        DF Masc Nom Sg => "der";
+        DF Masc Acc Sg => "den";
+        DF (Masc | Neut) Dat Sg => "dem";
+        DF (Masc | Neut) Gen Sg => "des";
+        DF Neut (Nom | Acc) Sg => "das";
+        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "";
+        DF (Fem | Masc | Neut) Dat Pl => "";
+        DF (Fem | Masc | Neut) Gen Pl => ""
+    }
+    };
 
    thePl_Det = {s = table {
-		   Fem => "le" ;
-       Neut => "die";
-		   Masc => pre {
-		     "a"|"e"|"i"|"o"|"u"|"sb"|"sc"|"sd"|"sf"|"sg"|"sh"|"sk"|"sl"|"sm"|"sn"|"sp"|"sq"|"sr"|"st"|"sz"|"gn"|"pn"|"ps"|"z" => "gli" ;
-		     _ => "i"
-		     }
-		   } ;
-		 n = Pl} ;
+		    DF Fem (Nom | Acc) Sg => "";
+        DF Fem (Gen | Dat) Sg => "";
+        DF Masc Nom Sg => "";
+        DF Masc Acc Sg => "";
+        DF (Masc | Neut) Dat Sg => "";
+        DF (Masc | Neut) Gen Sg => "";
+        DF Neut (Nom | Acc) Sg => "";
+        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "die";
+        DF (Fem | Masc | Neut) Dat Pl => "den";
+        DF (Fem | Masc | Neut) Gen Pl => "der"
+    }
+    };
       
+  -- Lilya:
+    -- AdjCommonNoun : Adjective -> CommonNoun -> CommonNoun = \adj, noun -> {
+    --  noun = \\nf => adj.s ! case nf of {
+    --    NF Sg Gen => AF Nom GPl;
+    --    NF n c => AF c (gennum noun.g n)
+    --  } ++ noun.noun ! nf;
+    --  g = noun.g
+    -- };
 
-    UseN n = n ;
-    
-  AdjCN ap cn = {
-    s = table {n => ap.s ! cn.g ! n ++ cn.s ! n } ;
-    g = cn.g ;
-    c = cn.c
-    } ;
+  UseN n = n ;
 
-  --AdjCN ap cn = {
-  --  s = table {
-  --  n => ap.s ! cn.g ! n cn.c ! n  ++ cn.s ! n} ;
-  --  g = cn.g;
-  --  c = cn.c;
-  --  } ;
+    AdjCN ap cn = {
+      s = table {n => ap.s ++ cn.s ! n}
+      } ;
 
-  -- AdjCN ap cn = {
-	-- s = case ap.isPre of {
-	-- True => \\n => cn.s ! n ++ ap.s ! cn.g ! n ;
-	-- False => \\n => ap.s ! cn.g ! n ++ cn.s ! n } ;
-	-- g = cn.g ;
-  -- c = cn.c ;
-	-- } ;
-
+    -- DetForm = DF Gender Case Number;
+    -- NounForm = NF Number Case ;
 
     PositA a = a ;
 
