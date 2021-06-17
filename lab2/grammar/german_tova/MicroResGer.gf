@@ -222,17 +222,4 @@ mkNeutN : Str -> Noun = \kind ->
   -- be_Verb : Verb = mkVerb "are" "is" "was" "been" "being" ; ---s to be generalized
   be_Verb : Verb = mkVerb "sein" "bin" "sind" "bist" "seid" "ist" "sind" ; ---s to be generalized
 
--- juls
-  -- agr2vform : Number -> VForm = \a -> case a of {
-  --   Sg => Pres Sg P3 ;
-  --   Pl => Pres Pl P3  
-  --   } ;
-
----s a very simplified verb agreement function for Micro
--- agr2vform : Agreement -> VForm = \a -> case a of {
---   Agr Sg => Pres P2 P3 ;
---   Agr Pl => Pres P1 P3
---   Agr 
---   } ;
-
 }
