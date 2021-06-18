@@ -7,8 +7,6 @@ param
   Gender = Fem | Masc | Neut ;
   NounForm = NF Number Case ; -- p. 94 course notes
   DetForm = DF Gender Case Number;
-
-  -- Agreement = Agr Number Person ;
   VForm = Inf | Pres Number Person ;
   VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
@@ -16,11 +14,24 @@ param
   
 oper
   --  define types:
-  --  Agr : Type = {g : Gender ; n : Number ; p : Person} ;
   Noun: Type = {s : NounForm => Str; g : Gender};
   Determiner: Type = {s: DetForm => Str};
   -- Determiner: Type = {s: Str};
   
+mkDet : DetForm -> Determiner = \df -> {
+      s = table {
+        DF Fem (Nom | Acc) Sg => "die";
+        DF Fem (Gen | Dat) Sg => "der";
+        DF Masc Nom Sg => "der";
+        DF Masc Acc Sg => "den";
+        DF (Masc | Neut) Dat Sg => "dem";
+        DF (Masc | Neut) Gen Sg => "des";
+        DF Neut (Nom | Acc) Sg => "das";
+        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "die" ;
+        DF (Fem | Masc | Neut) Dat Pl => "den" ;
+        DF (Fem | Masc | Neut) Gen Pl => "der"
+      };
+    };  
 
 
 -- TODO: make gender the deciding factor for which function to use
