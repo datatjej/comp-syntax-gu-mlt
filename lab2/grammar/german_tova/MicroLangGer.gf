@@ -83,6 +83,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
     DetCN det cn = {
     s = \\c,n => det.s ! (DF cn.g c n) ++ cn.s ! (NF n c);
+    --s = table {NF n c => det.s ! (DF cn.g c n) ++ cn.s ! (NF n c) };
     g = cn.g
     } ;
 
