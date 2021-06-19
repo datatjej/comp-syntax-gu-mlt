@@ -122,7 +122,46 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     };
     n = Pl
     };
-      
+
+    the_Det = {s = table {
+       Fem => table {
+           Nom | Acc => "die" ; 
+           Dat | Gen => "der" 
+        } ;
+        Masc => table {
+          Nom => "der" ; 
+          Acc => "den" ; 
+          Dat | Gen => "dem"
+        } ;
+        Neut => table {
+          Nom | Acc => "das" ; 
+          Dat => "dem"; 
+          Gen => "des"
+        }
+    };
+    n = Sg
+    };
+
+       thePl_Det = {s = table {
+       Fem => table {
+           Nom | Acc => "die" ; 
+           Dat => "den";
+           Gen => "der" 
+        } ;
+        Masc => table {
+          Nom | Acc => "die" ; 
+          Dat => "den" ; 
+          Gen => "der"
+        } ;
+        Neut => table {
+          Nom | Acc => "die" ; 
+          Dat => "den" ; 
+          Gen => "der"
+        }
+    };
+    n = Pl
+    };
+
     -- AdjCommonNoun : Adjective -> CommonNoun -> CommonNoun = \adj, noun -> {
     --  noun = \\nf => adj.s ! case nf of {
     --    NF Sg Gen => AF Nom GPl;
