@@ -116,7 +116,9 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     };
 
    aPl_Det = {s = table {
-		 _ => ""
+		 _ => table {
+       _ => ""
+     }
     };
     n = Pl
     };
