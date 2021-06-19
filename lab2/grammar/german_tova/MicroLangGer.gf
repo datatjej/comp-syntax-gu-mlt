@@ -114,6 +114,12 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     };
     n = Sg
     };
+
+   aPl_Det = {s = table {
+		 _ => ""
+    };
+    n = Pl
+    };
       
     -- AdjCommonNoun : Adjective -> CommonNoun -> CommonNoun = \adj, noun -> {
     --  noun = \\nf => adj.s ! case nf of {
