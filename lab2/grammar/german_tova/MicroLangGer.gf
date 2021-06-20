@@ -13,7 +13,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Comp = Adjective;
     AP = Adjective ;
     CN = Noun ;
-    NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
+   -- NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
+    NP = {s : Case => Str ; g : Gender ; n : Number} ;
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     Det = Determiner ;
     Prep = {s : Str} ;
@@ -82,67 +83,85 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       
 
     DetCN det cn = {
-    s = \\c,n => det.s ! (DF cn.g c n) ++ cn.s ! (NF n c);
-    --s = table {NF n c => det.s ! (DF cn.g c n) ++ cn.s ! (NF n c) };
+    s = \\c => det.s ! cn.g ! c ++ cn.s ! det.n ! c ;
+    n = det.n;
     g = cn.g
     } ;
 
-    -- DetForm = DF Gender Case Number;
-    -- NounForm = NF Number Case ;
+    -- DetForm = DF Gender Case + Number;
+    -- NounForm = NF Number Case + Gender;
    
    UsePron p = p ** { det = "" ; isPron = True } ;
             
             
     -- a_Det = {s = pre {"a"|"e"|"i"|"o" => "an" ; _ => "a"} ; n = Sg ; g = Masc} ;   --- a/an can get wrong
 
-   a_Det = {s = table {
-		    DF Fem (Nom | Acc) Sg => "eine";
-        DF Fem (Gen | Dat) Sg => "einer";
-        DF Masc Nom Sg => "ein";
-        DF Masc Acc Sg => "einen";
-        DF (Masc | Neut) Dat Sg => "einem";
-        DF (Masc | Neut) Gen Sg => "eines";
-        DF Neut (Nom | Acc) Sg => "ein";
-        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "";
-        DF (Fem | Masc | Neut) Dat Pl => "";
-        DF (Fem | Masc | Neut) Gen Pl => ""
-    }
+     a_Det = {s = table {
+       Fem => table {
+           Nom | Acc => "eine" ; 
+           Dat | Gen => "einer" 
+        } ;
+        Masc => table {
+          Nom => "ein" ; 
+          Acc => "einen" ; 
+          Dat | Gen => "einem"
+        } ;
+        Neut => table {
+          Nom | Acc => "ein" ; 
+          Dat => "einem"; 
+          Gen => "eines"
+        }
+    };
+    n = Sg
     };
 
-    aPl_Det = {s = table {
-		 _ => ""
-    }
+   aPl_Det = {s = table {
+		 _ => table {
+       _ => ""
+     }
+    };
+    n = Pl
     };
 
     the_Det = {s = table {
-       DF Fem (Nom | Acc) Sg => "die";
-        DF Fem (Gen | Dat) Sg => "der";
-        DF Masc Nom Sg => "der";
-        DF Masc Acc Sg => "den";
-        DF (Masc | Neut) Dat Sg => "dem";
-        DF (Masc | Neut) Gen Sg => "des";
-        DF Neut (Nom | Acc) Sg => "das";
-        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "";
-        DF (Fem | Masc | Neut) Dat Pl => "";
-        DF (Fem | Masc | Neut) Gen Pl => ""
-    }
+       Fem => table {
+           Nom | Acc => "die" ; 
+           Dat | Gen => "der" 
+        } ;
+        Masc => table {
+          Nom => "der" ; 
+          Acc => "den" ; 
+          Dat | Gen => "dem"
+        } ;
+        Neut => table {
+          Nom | Acc => "das" ; 
+          Dat => "dem"; 
+          Gen => "des"
+        }
+    };
+    n = Sg
     };
 
-   thePl_Det = {s = table {
-		    DF Fem (Nom | Acc) Sg => "";
-        DF Fem (Gen | Dat) Sg => "";
-        DF Masc Nom Sg => "";
-        DF Masc Acc Sg => "";
-        DF (Masc | Neut) Dat Sg => "";
-        DF (Masc | Neut) Gen Sg => "";
-        DF Neut (Nom | Acc) Sg => "";
-        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "die";
-        DF (Fem | Masc | Neut) Dat Pl => "den";
-        DF (Fem | Masc | Neut) Gen Pl => "der"
-    }
+       thePl_Det = {s = table {
+       Fem => table {
+           Nom | Acc => "die" ; 
+           Dat => "den";
+           Gen => "der" 
+        } ;
+        Masc => table {
+          Nom | Acc => "die" ; 
+          Dat => "den" ; 
+          Gen => "der"
+        } ;
+        Neut => table {
+          Nom | Acc => "die" ; 
+          Dat => "den" ; 
+          Gen => "der"
+        }
     };
-      
-  -- Lilya:
+    n = Pl
+    };
+
     -- AdjCommonNoun : Adjective -> CommonNoun -> CommonNoun = \adj, noun -> {
     --  noun = \\nf => adj.s ! case nf of {
     --    NF Sg Gen => AF Nom GPl;

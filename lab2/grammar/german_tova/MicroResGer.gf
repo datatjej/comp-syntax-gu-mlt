@@ -5,8 +5,10 @@ param
   Case = Nom | Acc | Dat | Gen ;
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
-  NounForm = NF Number Case ; -- p. 94 course notes
-  DetForm = DF Gender Case Number;
+<<<<<<< HEAD
+  --NounForm = NF Number Case ; -- p. 94 course notes
+  -- DetForm = DF Gender Case;
+>>>>>>> nf_df
   VForm = Inf | Pres Number Person ;
   VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
@@ -14,25 +16,12 @@ param
   
 oper
   --  define types:
-  Noun: Type = {s : NounForm => Str; g : Gender};
-  Determiner: Type = {s: DetForm => Str};
-  -- Determiner: Type = {s: Str};
-  
-mkDet : DetForm -> Determiner = \df -> {
-      s = table {
-        DF Fem (Nom | Acc) Sg => "die";
-        DF Fem (Gen | Dat) Sg => "der";
-        DF Masc Nom Sg => "der";
-        DF Masc Acc Sg => "den";
-        DF (Masc | Neut) Dat Sg => "dem";
-        DF (Masc | Neut) Gen Sg => "des";
-        DF Neut (Nom | Acc) Sg => "das";
-        DF (Fem | Masc | Neut) (Nom | Acc) Pl => "die" ;
-        DF (Fem | Masc | Neut) Dat Pl => "den" ;
-        DF (Fem | Masc | Neut) Gen Pl => "der"
-      };
-    };  
-
+<<<<<<< HEAD
+  --Noun: Type = {s : NounForm => Str; g : Gender};
+  --Determiner : Type = {s : DetForm => Str; n : Number};
+  Noun: Type = {s : Number => Case => Str ; g : Gender};
+  Determiner: Type = {s : Gender => Case => Str ; n : Number};
+>>>>>>> nf_df
 
 -- TODO: make gender the deciding factor for which function to use
 makeNoun : Str -> Noun = \word ->
@@ -43,53 +32,55 @@ makeNoun : Str -> Noun = \word ->
 
 mkMascN : Str -> Noun = \mann ->
       { s = table {
-          NF Sg Nom         => mann;
-          NF Sg Acc         => mann;
-          NF Sg Dat         => mann;
-          NF Sg Gen         => mann + "es";
-          NF Pl Nom         => mann + "er"; --??
-          NF Pl Acc         => mann + "er" ; --??
-          NF Pl Dat         => mann + "ern"; --??
-          NF Pl Gen         => mann + "er"}; --??
-      g = Masc };
+        Sg => table {
+           Nom => mann ; Acc => mann ; Dat => mann ; Gen => mann + "es"
+           } ;
+        Pl => table {
+          Nom => mann + "er" ; Acc => mann + "er" ; Dat => mann + "ern"; Gen => mann + "er"
+        }
+      }; 
+      g = Masc 
+      };
+
 
 mkFemN : Str -> Noun = \frau ->
       { s = table {
-          NF Sg Nom         => frau;
-          NF Sg Acc         => frau;
-          NF Sg Dat         => frau;
-          NF Sg Gen         => frau;
-          NF Pl Nom         => frau + "en"; --??
-          NF Pl Acc         => frau + "en" ; --??
-          NF Pl Dat         => frau + "en"; --??
-          NF Pl Gen         => frau + "en"}; --??
-      g = Fem };
+        Sg => table {
+           Nom => frau ; Acc => frau ; Dat => frau ; Gen => frau
+           } ;
+        Pl => table {
+          Nom => frau + "en" ; Acc => frau + "en" ; Dat => frau + "en"; Gen => frau + "en"
+        }
+      }; 
+      g = Fem 
+      };
   
 mkNeutN : Str -> Noun = \kind ->
       { s = table {
-          NF Sg Nom         => kind;
-          NF Sg Acc         => kind;
-          NF Sg Dat         => kind;
-          NF Sg Gen         => kind + "es";
-          NF Pl Nom         => kind + "er"; --??
-          NF Pl Acc         => kind + "er"; --??
-          NF Pl Dat         => kind + "ern"; --??
-          NF Pl Gen         => kind + "er"}; --??
-      g = Neut };
+        Sg => table {
+           Nom => kind ; Acc => kind ; Dat => kind ; Gen => kind + "es"
+           } ;
+        Pl => table {
+          Nom => kind + "er" ; Acc => kind + "er" ; Dat => kind + "ern"; Gen => kind + "er"
+        }
+      }; 
+      g = Neut
+      };
+  
   
   mkWorstN  : (nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl : Str) -> Gender -> Noun
     =  \nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl, g ->
    {
      s = table {
-           NF Sg Nom     => nomSg;
-           NF Sg Acc     => accSg;
-           NF Sg Dat     => datSg;
-           NF Sg Gen     => genSg;
-           NF Pl Nom     => nomPl;
-           NF Pl Acc     => accPl;
-           NF Pl Dat     => datPl;
-           NF Pl Gen     => genPl};
-     g = g };
+       Sg => table {
+           Nom => nomSg ; Acc => accSg ; Dat => datSg ; Gen => genSg
+           } ;
+      Pl => table {
+           Nom => nomPl ; Acc => accPl ; Dat => datPl ; Gen => genPl
+           }
+     };
+     g = g 
+     };
 
   -- mkNoun : (sg, pl : Str) -> Gender -> Case -> Noun = \sg, pl, gender, cas -> {
   --   s = table { Sg => sg ; Pl => pl } ;
