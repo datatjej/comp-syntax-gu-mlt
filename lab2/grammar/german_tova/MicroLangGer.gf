@@ -14,7 +14,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     AP = Adjective ;
     CN = Noun ;
    -- NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
-    NP = {s : Case => Str ; g : Gender ; n : Number} ;
+    NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ;
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     Det = Determiner ;
     Prep = {s : Str} ;
@@ -24,21 +24,21 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     N = Noun ;
     Adv = {s : Str} ;
 
+
   lin
     UttS s = s ;
     UttNP np = {s = np.s ! Acc} ;
 
-    PredVPS np vp = { -- vad är det här? 
-    s = case np.isPron of {
-	  True => case np.n of { Sg => np.s ! Nom ; Pl => "" } ;
-	  False => np.det ++ np.s ! Nom
-	  } ++
-	  case vp.isPron of {
-	  True => vp.compl ! np.g ! np.n ++ vp.verb.s ! Pres np.n P3 ;
-	  False => 
-	    vp.verb.s ! Pres np.n P3 ++ vp.compl ! np.g ! np.n
-	  }
-      };
+  -- PredVPS : NP -> VPS -> S ; 
+
+  --PredVPS np vp = {
+  --  s = np.s ! Nom ++ vp.verb.s ! agr2vform np.a ++ vp.compl
+  --  } ;
+
+  PredVPS np vp = { -- Saga
+  s = np.s ! Nom ++ vp.verb.s ++ vp.compl ! np.a  
+   } ;
+
       
     --UseV v = {
     --  verb = v ;
@@ -85,7 +85,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     DetCN det cn = {
     s = \\c => det.s ! cn.g ! c ++ cn.s ! det.n ! c ;
     n = det.n;
-    g = cn.g
+    g = cn.g;
+    isPron = False
     } ;
 
     -- DetForm = DF Gender Case + Number;
