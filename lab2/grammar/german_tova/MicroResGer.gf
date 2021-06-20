@@ -5,23 +5,22 @@ param
   Case = Nom | Acc | Dat | Gen ;
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
-<<<<<<< HEAD
   --NounForm = NF Number Case ; -- p. 94 course notes
   -- DetForm = DF Gender Case;
->>>>>>> nf_df
+
   VForm = Inf | Pres Number Person ;
   VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
   
-  
+
 oper
   --  define types:
-<<<<<<< HEAD
+
   --Noun: Type = {s : NounForm => Str; g : Gender};
   --Determiner : Type = {s : DetForm => Str; n : Number};
   Noun: Type = {s : Number => Case => Str ; g : Gender};
   Determiner: Type = {s : Gender => Case => Str ; n : Number};
->>>>>>> nf_df
+
 
 -- TODO: make gender the deciding factor for which function to use
 makeNoun : Str -> Noun = \word ->
