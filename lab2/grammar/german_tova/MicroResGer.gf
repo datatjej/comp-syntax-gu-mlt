@@ -8,6 +8,7 @@ param
   VForm = Inf | Pres Number Person ;
   VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
+  -- AdjForm = Strong | Weak ;
 
 oper
   --  define types:
@@ -80,50 +81,33 @@ oper
 
   Adjective : Type = {s : Gender => Number => Str} ;
 
+  -- NOTES: AdjForms : Type = { pred, mnom, macc, mdat, fnom, nnom : Str} 
 
-  -- mkAdjective : (femSg, femPl, neutSg, neutPl, mascSg, mascPl : Str) -> Adjective =
-  mkAdjective : (_, _, _, _, _, _ : Str) -> Adjective =
-      \femSg, femPl, neutSg, neutPl, mascSg, mascPl ->
+  mkAdjective : Str -> Adjective =
+      \a ->
       {
 	s = table {
 	  Fem => 
 	    table {
-	      Sg => femSg ;
-	      Pl => femPl 
+	      Sg => a + "e";
+	      Pl => a + "e" 
 	    } ; 
       Neut =>
       table {
-        Sg => neutSg ;
-        Pl => neutPl
+        Sg => a + "es" ;
+        Pl => a + "e"
       } ;
-	  Masc =>
+	    Masc =>
 	    table {
-	      Sg => mascSg ;
-	      Pl => mascPl
+	      Sg => a + "er" ;
+	      Pl => a + "e"
 	    }
 	  } 
       } ;
 
-    -- herbert
-    -- smartAdjective : Str -> Adjective =
-    -- \sg ->
-    -- case sg of {
-	  -- italian + "o" => mkAdjective (italian + "a") (italian + "e") sg (italian + "i") False ;
-	  -- grand + "e" => mkAdjective sg (grand + "i") sg sg False
-	  --_ =>  error ("No smarts for adjectives here: " ++ sg)
-    --} ;
+ --  kleine, kleine, klein, kleine, kleiner, kleine
+  -- isPre --> isIndef 
 
-  regAdj : Str -> Adjective = \mascSg -> mkAdjective mascSg (mascSg + "e") (mascSg + "s") (mascSg + "es") (mascSg + "es") (mascSg + "es") ;
-   smartAdjective : Str -> Adjective = \mascSg -> case mascSg of {
-  	gran + "d"					=> regAdj mascSg ;
-	  roug + "e"					=> mkAdjective mascSg (roug + "es") (roug + "es") (roug + "es") (roug + "es") (roug + "es");
-	  mauvai + "s"				=> mkAdjective mascSg (mauvai + "se") (mauvai + "ses") (mauvai + "ses") (mauvai + "ses") (mauvai + "ses") ;
-	  b + "on"					  => mkAdjective mascSg (b + "onne") (b + "ons") (b + "onnes") (b + "onnes") (b + "onnes");
-	  anci + "en"					=> mkAdjective mascSg (anci + "enne") (anci + "ens") (anci + "ennes") (anci + "ens") (anci + "ennes");
-	  nouv + "eau"				=> mkAdjective mascSg (nouv + "elle") (nouv + "eaux") (nouv + "elles") (nouv + "eaux") (nouv + "elles");
-	  _	                        => regAdj mascSg
-  } ;
-	
 
   Verb : Type = {s : VForm => Str} ;
   -- two-place verb with "case" as preposition; for transitive verbs, c=[]

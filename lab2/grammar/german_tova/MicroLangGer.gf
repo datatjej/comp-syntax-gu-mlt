@@ -37,26 +37,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 	}
 	};
 
-  --PredVPS np vp = {
-  --  s = np.s ! Nom ++ vp.verb.s ! agr2vform np.a ++ vp.compl
-  --  } ;
-
-  -- PredVPS np vp = { -- Saga
-  -- s = np.s ! Nom ++ vp.verb.s ++ vp.compl ! np.a  
-  -- } ;
-
-      
-    --UseV v = {
-    --  verb = v ;
-    --  compl = [] ;
-    --  } ;
-
-    --UseV v = {
-    --verb = v ;
-    --compl = \\_,_ => [] ;
-    --isPron = False
-    --} ;
-
     UseV v = {
     verb = v ;
     compl = \\g, n => [] ;
@@ -64,18 +44,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 	  adv = []
       } ;
       
-    --ComplV2 v2 np = {
-    --  verb = v2 ;
-    --  compl = v2.c ++ np.s ! Acc  -- NP object in the accusative, preposition first
-    --  } ;
-
-    -- ComplV2 v2 np = {
-    -- verb = v2 ;
-    -- compl = \\_,_ => v2.c ! np.g ! np.n ++ np.det ++ np.s ! Acc ;
-    -- isPron = np.isPron ;
-	  -- adv = []
-	  -- } ;
-
     ComplV2 v2 np = {
       verb = v2 ;
       compl = \\g, n => v2.c ! g ! n ++ np.s ! Acc ; -- NP object in the accusative, preposition first  
@@ -83,16 +51,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 	    adv = []
 	  } ;
 
-    --UseComp comp = {
-    --  verb = be_Verb ;     -- the verb is the copula "be"
-    --  compl = comp.s
-    --  } ;
-
-    --UseComp comp = {
-    --verb = be_Verb ;     -- the verb is the copula "be"
-    --compl = comp.s ;
-    --isPron = False ;
-    --} ;
     
     UseComp comp = {
       verb = be_Verb ;     -- the verb is the copula "be"
@@ -116,13 +74,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     isPron = False
     } ;
 
-    -- DetForm = DF Gender Case + Number;
-    -- NounForm = NF Number Case + Gender;
-   
    UsePron p = p ** { det = "" ; isPron = True } ;
             
-            
-    -- a_Det = {s = pre {"a"|"e"|"i"|"o" => "an" ; _ => "a"} ; n = Sg ; g = Masc} ;   --- a/an can get wrong
 
      a_Det = {s = table {
        Fem => table {
@@ -190,24 +143,9 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     n = Pl
     };
 
-    -- AdjCommonNoun : Adjective -> CommonNoun -> CommonNoun = \adj, noun -> {
-    --  noun = \\nf => adj.s ! case nf of {
-    --    NF Sg Gen => AF Nom GPl;
-    --    NF n c => AF c (gennum noun.g n)
-    --  } ++ noun.noun ! nf;
-    --  g = noun.g
-    -- };
-
   UseN n = n ;
 
-
-    --AdjCN ap cn = {  -- froher hund 
-    --s = \\c => ap.s ! cn.g ! c ++ cn.s ! cn.n ! c ;
-    --n = cn.n;
-    --g = cn.g
-    --} ;
-
-    AdjCN ap cn = {
+    AdjCN ap cn = {  -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
     s = \\n,c => ap.s ! cn.g ! n ++ cn.s ! n ! c ;
     g = cn.g
     } ;
@@ -362,12 +300,13 @@ oper
    };
 
 
+  -- engelska:
   -- mkA : Str -> A
-  --  = \s -> lin A {s = s} ;
+  --  = \s -> lin A {s = s} ; 
 
   mkA = overload {
-  mkA : Str -> A = \a -> lin A (smartAdjective a) ;
-  mkA : Str -> Bool -> A = \a,p -> lin A (smartAdjective a ** { isPre = p }) ;
+  mkA : Str -> A = \a -> lin A (mkAdjective a) ;
+  --mkA : Str -> Bool -> A = \a,p -> lin A (smartAdjective a ** { isPre = p }) ;
   } ;
 
    mkV = overload {
