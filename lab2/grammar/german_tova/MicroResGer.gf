@@ -1,122 +1,79 @@
-resource MicroResGer = open Prelude in {
+resource MicroResGer = open Prelude, Predef in {
 
 param
   Number = Sg | Pl ;
   Case = Nom | Acc | Dat | Gen ;
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
-  --NounForm = NF Number Case ; -- p. 94 course notes
-  -- DetForm = DF Gender Case;
-
   VForm = Inf | Pres Number Person ;
   VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
-  
 
 oper
   --  define types:
-
-  --Noun: Type = {s : NounForm => Str; g : Gender};
-  --Determiner : Type = {s : DetForm => Str; n : Number};
   Noun: Type = {s : Number => Case => Str ; g : Gender};
   Determiner: Type = {s : Gender => Case => Str ; n : Number};
 
-
--- TODO: make gender the deciding factor for which function to use
-makeNoun : Str -> Noun = \word ->
-  case word of {
-    stem + "а"         => mkFemN stem;
-    stem + ("о" | "е") => mkNeutN word;
-      _                 => mkMascN word };
-
-mkMascN : Str -> Noun = \mann ->
-      { s = table {
-        Sg => table {
-           Nom => mann ; Acc => mann ; Dat => mann ; Gen => mann + "es"
-           } ;
-        Pl => table {
-          Nom => mann + "er" ; Acc => mann + "er" ; Dat => mann + "ern"; Gen => mann + "er"
-        }
-      }; 
-      g = Masc 
-      };
-
-
-mkFemN : Str -> Noun = \frau ->
-      { s = table {
-        Sg => table {
-           Nom => frau ; Acc => frau ; Dat => frau ; Gen => frau
-           } ;
-        Pl => table {
-          Nom => frau + "en" ; Acc => frau + "en" ; Dat => frau + "en"; Gen => frau + "en"
-        }
-      }; 
-      g = Fem 
-      };
-  
-mkNeutN : Str -> Noun = \kind ->
-      { s = table {
-        Sg => table {
-           Nom => kind ; Acc => kind ; Dat => kind ; Gen => kind + "es"
-           } ;
-        Pl => table {
-          Nom => kind + "er" ; Acc => kind + "er" ; Dat => kind + "ern"; Gen => kind + "er"
-        }
-      }; 
-      g = Neut
-      };
-  
-  
-  mkWorstN  : (nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl : Str) -> Gender -> Noun
-    =  \nomSg, accSg, datSg, genSg, nomPl, accPl, datPl, genPl, g ->
-   {
-     s = table {
-       Sg => table {
-           Nom => nomSg ; Acc => accSg ; Dat => datSg ; Gen => genSg
-           } ;
+  mkNoun : (sg, genSg, pl : Str) -> Gender -> Noun = 
+    \sg,genSg,pl,g -> {
+    s = table {
+      Sg => table {
+        Nom => sg ;
+        Acc => sg ;
+        Dat => sg ;
+        Gen => genSg
+        } ;
       Pl => table {
-           Nom => nomPl ; Acc => accPl ; Dat => datPl ; Gen => genPl
-           }
-     };
-     g = g 
-     };
+        Nom => pl ;
+        Acc => pl ;
+        Dat => pl + "n" ;
+        Gen => pl
+        }
+      } ;
+    g = g
+    } ;
 
-  -- mkNoun : (sg, pl : Str) -> Gender -> Case -> Noun = \sg, pl, gender, cas -> {
-  --   s = table { Sg => sg ; Pl => pl } ;
-  --   g = gender ;
-	--   c = cas
-  --   } ;
+      
+ smartNoun : Str -> Noun = \sg -> case sg of {
+    _ + ("ik"|"au"|"ilch"|"e")    => regNounFem sg;
+    _ + ("ier"|"erd"|"und"|"iff"|"ern"|"ein")					    => regNounMasc sg;
+    _ + ("o"|"y")   			=> regNounNeut sg
+    -- _ => error ("No smarts for nouns here: " ++ sg)
+   } ;
 
 
-  -- regNoun : Str -> Noun = 
-  --  \sg -> mkNoun sg (sg + "e") Fem Nom;
+  regNounMasc : Str -> Noun = \tier ->
+    let
+      tier = tier;
+      tiere = tier + "e";
+      tieres = tier + "es";
+    in
+    mkNoun 
+      tier tieres tiere
+      Masc ;
 
-  -- smartNoun : Str -> Noun = \sg -> case sg of {
-  --  _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Nom;
-  --  _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Dat;
-  --  _ + ("ik"|"au")         => mkNoun sg (sg + "en") Fem Gen;
-	--  _ + "e"					        => mkNoun sg (sg + "n") Masc Nom;
-  --  _ + "o"   				      => mkNoun sg (sg + "s") Neut Nom;
-	--   _ + ("chen"|"er")      => mkNoun sg sg Fem Nom -- Don't add anything to these nouns, because Pl = Sg
-  -- } ;
-	
-  -- smart paradigm
-  --smartNoun : Str -> Noun = \sg -> case sg of {
-  --  _ + ("ay"|"ey"|"oy"|"uy") => regNoun sg ;
-  -- x + "y"                   => mkNoun sg (x + "ies") ;
-  --  _ + ("ch"|"sh"|"s"|"o")   => mkNoun sg (sg + "es") ;
-  --  _                         => regNoun sg
-  --  } ;
-	
-	-- +e: Blut(e), Tier(e), Bier(e), Boot(e), Brot(e), Hund(e), Fisch(e), Pferd(e), Milch(e), Schiff(e), Stern(e), Wein(e)
-	-- +n: Junge(n), Katze(n), Wolke(n), Blume(n), Sprache(n), See(n)
-	-- +s: Auto(s) OBS: inget -n i dativ
-	-- +en: Grammatik(en), Musik(en), Frau(en)
-	--vokaländring: Apfel, Vogel: Apfel --> Äpfel, Vogel -> Vögel
-	--vokaländring + er: Buch --> Bücher, Haus --> Häuser, Baum --> Bäume
-	--vokaländring + e: Stadt --> Städte, Kuh --> Kühe, Zug --> Züge
-	--oregelbundna: Kind(er)
-	--ingen ändring: Computer, Feuer, Mädchen, Wasser
+    regNounFem : Str -> Noun = \frau ->
+    let
+      frau = frau;
+      frauen = frau + "en";
+    in
+    mkNoun 
+      frau frau frauen
+      Fem ;
+
+  regNounNeut : Str -> Noun = \baby ->
+    let
+      baby = baby;
+      babys = baby + "s";
+    in
+    mkNoun 
+      baby babys babys
+      Neut ;
+  
+   -- "Apfel" "Apfel" "Apfel" "Apfels" "Äpfel" "Äpfel" "Äpfeln" "Äpfel" Masc;
+   -- "Kind" "Kind" "Kind" "Kindes" "Kinder" "Kinder" "Kindern "Kinder" Neut;
+   -- "Bier" "Bier" "Bier" "Bieres" "Biere" "Biere" "Bieren" 
+   -- "Stadt" "Stadt" "Stadt" "Stadt" "Städte" "Städte" "Städten" "Städte" Fem;
 
   -- Adjective : Type = {s : Str} ;
   -- Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
@@ -133,7 +90,7 @@ mkNeutN : Str -> Noun = \kind ->
 	    table {
 	      Sg => femSg ;
 	      Pl => femPl 
-	    } ;
+	    } ; 
       Neut =>
       table {
         Sg => neutSg ;
@@ -210,5 +167,13 @@ mkNeutN : Str -> Noun = \kind ->
 
   -- be_Verb : Verb = mkVerb "are" "is" "was" "been" "being" ; ---s to be generalized
   be_Verb : Verb = mkVerb "sein" "bin" "sind" "bist" "seid" "ist" "sind" ; ---s to be generalized
+
+
+  agr2vform : Number -> VForm = \a -> case a of {
+    Sg => Pres Sg P3 ;
+    Pl => Pres Pl P3 
+  } ;
+
+--}
 
 }
