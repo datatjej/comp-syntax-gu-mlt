@@ -71,13 +71,8 @@ oper
       baby babys babys
       Neut ;
   
-   -- "Apfel" "Apfel" "Apfel" "Apfels" "Äpfel" "Äpfel" "Äpfeln" "Äpfel" Masc;
-   -- "Kind" "Kind" "Kind" "Kindes" "Kinder" "Kinder" "Kindern "Kinder" Neut;
-   -- "Bier" "Bier" "Bier" "Bieres" "Biere" "Biere" "Bieren" 
-   -- "Stadt" "Stadt" "Stadt" "Stadt" "Städte" "Städte" "Städten" "Städte" Fem;
 
-  -- Adjective : Type = {s : Str} ;
-  -- Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
+  -- herbert: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
 
   Adjective : Type = {s : Gender => Number => Str} ;
 
@@ -108,52 +103,78 @@ oper
  --  kleine, kleine, klein, kleine, kleiner, kleine
   -- isPre --> isIndef 
 
-
   Verb : Type = {s : VForm => Str} ;
-  -- two-place verb with "case" as preposition; for transitive verbs, c=[]
-  Verb2 : Type = Verb ** {c : Gender => Number => Str} ;
 
-  mkVerb : (inf, sg1, sg2, sg3, pl1, pl2, pl3: Str) -> Verb
-    = \inf,sg1,sg2,sg3,pl1, pl2, pl3 -> {
+   mkVerb : (inf,sg1,sg2,sg3,pl1,pl2,pl3 : Str) -> Verb
+    = \inf,sg1,sg2,sg3,pl1,pl2,pl3 -> {
     s = table {
       Inf => inf ;
-      Pres Sg P1 => sg1 ;
-      Pres Sg P2 => sg2 ;
-      Pres Sg P3 => sg3 ;
-      Pres Pl P1 => pl1 ;
-      Pres Pl P2 => pl2 ;
+      Pres Sg P1 => sg1;
+      Pres Sg P2 => sg2;
+      Pres Sg P3 => sg3;
+      Pres Pl P1 => pl1;
+      Pres Pl P2 => pl2;
       Pres Pl P3 => pl3
-      }
+       }
     } ;
 
-  regVerb : (inf: Str) -> Verb = \inf ->
-    mkVerb inf (inf + "s") (inf + "ed") (inf + "ed") (inf + "ing") (inf + "ing") (inf + "ing")  ;
+    regVerb : (inf,stem : Str) -> Verb
+      = \inf,stem -> {
+	    s = table {
+	    -- sehen
+	    Inf => inf ;
+	    -- seh + e
+	    Pres Sg P1 => stem + "e"; -- Sg P1? 
+      Pres Sg P2 => stem + "st";
+      Pres Sg P3 => stem + "t";
+      Pres Pl P1 => inf;
+      Pres Pl P2 => stem + "t";
+      Pres Pl P3 => inf
+	    } 
+    } ;
 
-  -- regular verbs with predictable variations
-  smartVerb : Str -> Verb = \inf -> case inf of {
-    pl +  ("a"|"e"|"i"|"o"|"u") + "y" => regVerb inf ;
-    cr +  "y" =>  mkVerb inf (cr + "ies") (cr + "ied") (cr + "ied") (inf + "ing") (inf + "ing") (inf + "ing")  ;
-    lov + "e"  => mkVerb inf (inf + "s") (lov + "ed") (lov + "ed") (lov + "ing") (inf + "ing") (inf + "ing") ;
-    kis + ("s"|"sh"|"x"|"o") => mkVerb inf (inf + "es") (inf + "ed") (inf + "ed") (inf + "ing") (inf + "ing") (inf + "ing") ;
-    _ => regVerb inf
-  } ;
+      regVerb2 : (inf,stem : Str) -> Verb
+      = \inf,stem -> {
+	    s = table {
+	    -- warten
+	    Inf => inf ;
+	    -- wart + e
+	    Pres Sg P1 => stem + "te"; -- Sg P1? 
+      Pres Sg P2 => stem + "test";
+      Pres Sg P3 => stem + "tet";
+      Pres Pl P1 => inf;
+      Pres Pl P2 => stem + "tet";
+      Pres Pl P3 => inf
+	    } 
+    } ;
 
-  -- normal irregular verbs e.g. drink,drank,drunk
-  -- irregVerb : (inf,past,pastpart : Str) -> Verb =
-  --  \inf,past,pastpart ->
-  --    let verb = smartVerb inf
-  --    in mkVerb inf (verb.s ! PresSg3) past pastpart (verb.s ! PresPart) ;   
+    --TODO: stems ending in -t --> tött, warten --> tötet, wartet
+
+--   -- regular verbs with predictable variations
+    smartVerb : Str -> Verb = \inf -> case inf of {
+      seh + "en" => regVerb inf seh ;
+      war + "ten" => regVerb2 inf war ;
+      -- dorm + "ire" => verb3ire inf dorm dorm ;
+      _ => error ("No smarts for verbs here: " ++ inf)
+      } ;
 
   irregVerb : (inf,sg1,sg2,sg3,pl1,pl2,pl3 : Str) -> Verb =
     \inf,sg1,sg2,sg3,pl1,pl2,pl3 ->
       let verb = smartVerb inf 
-	  in mkVerb inf sg1 sg2 sg3 pl1 pl2 pl3 ;
+	  in mkVerb inf sg1 sg2 sg3 pl1 pl2 pl3;
 
-  -- be_Verb : Verb = mkVerb "are" "is" "was" "been" "being" ; ---s to be generalized
-  be_Verb : Verb = mkVerb "sein" "bin" "sind" "bist" "seid" "ist" "sind" ; ---s to be generalized
+  
+  -- two-place verb with "case" as preposition; for transitive verbs, c=[]
+  -- Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
 
+  -- Verb2 : Type = Verb ** {c : Str} ; -- engelska
+  Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
 
-  agr2vform : Number -> VForm = \a -> case a of {
+  be_Verb : Verb = mkVerb "sein" "bin" "bist" "ist" "sind" "seid" "sind";
+
+-- Preposition : Type = {s : Str ; con : Gender => Number => Str} ;
+
+ agr2vform : Number -> VForm = \a -> case a of {
     Sg => Pres Sg P3 ;
     Pl => Pres Pl P3 
   } ;
