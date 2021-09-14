@@ -10,9 +10,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     
     S  = {s : Str} ;
     VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --hl
-    -- VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool ; adv : Str } ; --julia
-    Comp = Adjective;
-    AP = Adjective ;
     CN = Noun ;
    -- NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
     NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ;
@@ -21,13 +18,27 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ; --transitive? 
-    A = Adjective ;
     N = Noun ;
     Adv = {s : Str} ;
+    A = Adjective ;
+    AP = Adjective ;
+    Comp = Adjective;
+
+    --hl: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
+    -- min: Adjective : Type = {s : UseAP => Str} ; --> Attr (sgA AForm Gender Case) | Pred;
 
   lin
     UttS s = s ;
+    
     UttNP np = {s = np.s ! Acc} ;
+
+  -- REMOVE:
+  -- UseA a = {s = a.s} ;
+    -- AttrAP : AP -> CN;
+    --AttrAP ap cn = {s = ap.s ++ cn.s} ;
+    -- PredAP : NP -> be_Verb -> AP -> S ;
+    -- PredAP np cop ap = {s = np.s ++ cop.s ++ ap.s} ;
+    
 
  -- PredVPS np vp = {
 --	s = np.s ! Nom ++
@@ -104,11 +115,13 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     UseComp comp = {
       verb = be_Verb ;     -- the verb is the copula "be"
       compl = \\g,n => comp.s ! g ! n ;
-	  isPron = False ;
-	  adv = []
-      } ;
+	    isPron = False ;
+	    adv = []
+    } ;
 
-    CompAP ap = ap ;
+    CompAP ap = {s = \\_ => ap.s ! Pred} ;  -- Afrikans lib/src/afrikaans/VerbAfr.gf:  CompAP ap = {s = \\_ => ap.s ! APred} ;
+
+
     --AdvVP vp adv =
     --  vp ** {compl = vp.compl ++ adv.s} ;
 
@@ -131,26 +144,40 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     } ;
 
    UsePron p = p ** { det = "" ; isPron = True } ;
-            
 
-     a_Det = {s = table {
-       Fem => table {
-           Nom | Acc => "eine" ; 
-           Dat | Gen => "einer" 
-        } ;
-        Masc => table {
-          Nom => "ein" ; 
-          Acc => "einen" ; 
-          Dat | Gen => "einem"
-        } ;
-        Neut => table {
-          Nom | Acc => "ein" ; 
-          Dat => "einem"; 
-          Gen => "eines"
-        }
-    };
-    n = Sg
-    };
+
+   
+  a_Det = {s = table {Masc => table {Sg => table {Nom => "ein" ;
+                                              Gen => "eines" ;
+                                              Dat => "einem" ;
+                                              Acc => "einen" } ;
+                                    Pl => table {Nom => "einige" ;
+                                              Gen => "einiger" ;
+                                              Dat => "einigen" ;
+                                              Acc => "einige" }  
+                                              } ;
+                      Fem => table {Sg => table {Nom => "eine" ;
+                                              Gen => "einer" ;
+                                              Dat => "einer" ;
+                                              Acc => "eine" } ;
+                                  Pl => table {Nom => "einige" ;
+                                              Gen => "einiger" ;
+                                              Dat => "einigen" ;
+                                              Acc => "einige" } 
+                                  } ;
+                      Neut => table {Sg => table {Nom => "ein" ;
+                                              Gen => "eines" ;
+                                              Dat => "einem" ;
+                                              Acc => "ein" } ;
+                                    Pl =>  table {Nom => "einige" ;
+                                              Gen => "einiger" ;
+                                              Dat => "einigen" ;
+                                              Acc => "einige" } 
+                                    
+                                    }} ;
+          d = Mixed };          
+
+
 
    aPl_Det = {s = table {
 		 _ => table {
@@ -160,44 +187,47 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     n = Pl
     };
 
-    the_Det = {s = table {
-       Fem => table {
-           Nom | Acc => "die" ; 
-           Dat | Gen => "der" 
-        } ;
-        Masc => table {
-          Nom => "der" ; 
-          Acc => "den" ; 
-          Dat | Gen => "dem"
-        } ;
-        Neut => table {
-          Nom | Acc => "das" ; 
-          Dat => "dem"; 
-          Gen => "des"
-        }
-    };
-    n = Sg
-    };
+  -----------------------
 
-       thePl_Det = {s = table {
-       Fem => table {
-           Nom | Acc => "die" ; 
-           Dat => "den";
-           Gen => "der" 
-        } ;
-        Masc => table {
-          Nom | Acc => "die" ; 
-          Dat => "den" ; 
-          Gen => "der"
-        } ;
-        Neut => table {
-          Nom | Acc => "die" ; 
-          Dat => "den" ; 
-          Gen => "der"
-        }
-    };
-    n = Pl
-    };
+      the_Det = {s = table {Masc => table 
+                              {Sg => table 
+                                {Nom => "der" ; 
+                                Gen => "des" ;
+                                Dat => "dem" ;
+                                Acc => "den" }} ;
+                          Fem => table 
+                              {Sg => table 
+                                {Nom => "die" ;
+                                Gen => "der" ;
+                                Dat => "der" ;
+                                Acc => "die" }} ;
+                           Neut => table 
+                              {Sg => table 
+                                {Nom => "das" ;
+                                Gen => "des" ;
+                                Dat => "dem" ;
+                                Acc => "das" }}} ;
+                d = Weak }; -- STÄMMER d?
+
+      thePl_Det = {s = table {Masc => table 
+                          {Pl => table 
+                            {Nom => "die" ; 
+                            Gen => "der" ;
+                            Dat => "den" ;
+                            Acc => "die" }} ;
+                      Fem => table 
+                          {Pl => table 
+                            {Nom => "die" ;
+                            Gen => "der" ;
+                            Dat => "den" ;
+                            Acc => "die" }} ;
+                        Neut => table 
+                          {Pl => table 
+                            {Nom => "die" ;
+                            Gen => "der" ;
+                            Dat => "den" ;
+                            Acc => "die" }}};
+                d = Weak }; -- STÄMMER d?
 
   UseN n = n ;
 

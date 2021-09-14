@@ -6,14 +6,23 @@ param
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
   VForm = Inf | Pres Number Person ;
-  VType = Weak | Strong ; --needed? not sure
+  -- VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
-  -- AdjForm = Strong | Weak ;
+  
+  --Use = Attr | Pred ;
+  UseAP = Attr FormA | Pred;
+  AForm = Strong | Weak | Mixed ;  --Adekl = strong | weak | mixed ;
+  FormA = sgA AForm Gender Case | plA AForm Case ;
 
 oper
   --  define types:
+
+  -- FormA = sgA (_ : {Adekl} ) (_ : {Gender} ) (_ : {Case} ) | plA (_ : {Adekl} ) (_ : {Case} ) ;
+  --- AFORM = ADEKL
+
   Noun: Type = {s : Number => Case => Str ; g : Gender};
-  Determiner: Type = {s : Gender => Case => Str ; n : Number};
+
+  Determiner: Type = {s: Gender => Number => Case => Str ; d : AForm}; -- ÄNDRAD ENLIGT TY
 
   mkNoun : (sg, genSg, pl : Str) -> Gender -> Noun = 
     \sg,genSg,pl,g -> {
@@ -74,31 +83,69 @@ oper
 
   -- herbert: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
 
-  Adjective : Type = {s : Gender => Number => Str} ;
+  -- OLD: Adjective : Type = {s : Gender => Number => Str} ;
+
+  Adjective : Type = {s : UseAP => Str} ;
 
   -- NOTES: AdjForms : Type = { pred, mnom, macc, mdat, fnom, nnom : Str} 
 
-  mkAdjective : Str -> Adjective =
-      \a ->
-      {
-	s = table {
-	  Fem => 
-	    table {
-	      Sg => a + "e";
-	      Pl => a + "e" 
-	    } ; 
-      Neut =>
-      table {
-        Sg => a + "es" ;
-        Pl => a + "e"
-      } ;
-	    Masc =>
-	    table {
-	      Sg => a + "er" ;
-	      Pl => a + "e"
-	    }
-	  } 
-      } ;
+  mkAdjective : Str -> Adjective =         -- mkFormsA : {Comp} -> Str -> {UseAP} => Str = \c_0 -> \str_1 -> table ({UseAP} ) {
+        \str_1 -> { s = table {
+    Attr (sgA Strong Masc Nom) => str_1 + "er" ;
+    Attr (sgA Strong Masc Gen)=> str_1 + "es" ;
+    Attr (sgA Strong Masc Dat)=> str_1 + "em" ;
+    Attr (sgA Strong Masc Acc) => str_1 + "en" ;
+    Attr (sgA Strong Fem Nom) => str_1 + "e" ;
+    Attr (sgA Strong Fem Gen) => str_1 + "er" ;
+    Attr (sgA Strong Fem Dat) => str_1 + "er" ;
+    Attr (sgA Strong Fem Acc) => str_1 + "e" ;
+    Attr (sgA Strong Neut Nom) => str_1 + "es" ;
+    Attr (sgA Strong Neut Gen) => str_1 + "es" ;
+    Attr (sgA Strong Neut Dat) => str_1 + "em" ;
+    Attr (sgA Strong Neut Acc) => str_1 + "es" ;
+    Attr (sgA Weak Masc Nom) => str_1 + "e" ;
+    Attr (sgA Weak Masc Gen)=> str_1 + "en" ;
+    Attr (sgA Weak Masc Dat)=> str_1 + "en" ;
+    Attr (sgA Weak Masc Acc) => str_1 + "en" ;
+    Attr (sgA Weak Fem Nom) => str_1 + "e" ;
+    Attr (sgA Weak Fem Gen) => str_1 + "en" ;
+    Attr (sgA Weak Fem Dat) => str_1 + "en" ;
+    Attr (sgA Weak Fem Acc) => str_1 + "e" ;
+    Attr (sgA Weak Neut Nom) => str_1 + "e" ;
+    Attr (sgA Weak Neut Gen) => str_1 + "en" ;
+    Attr (sgA Weak Neut Dat) => str_1 + "en" ;
+    Attr (sgA Weak Neut Acc) => str_1 + "e" ;
+    -- < MIXED sgA >
+    Attr (sgA Mixed Masc Nom) => str_1 + "er" ;
+    Attr (sgA Mixed Masc Gen)=> str_1 + "en" ;
+    Attr (sgA Mixed Masc Dat)=> str_1 + "en" ;
+    Attr (sgA Mixed Masc Acc) => str_1 + "en" ;
+    Attr (sgA Mixed Fem Nom) => str_1 + "e" ;
+    Attr (sgA Mixed Fem Gen) => str_1 + "en" ;
+    Attr (sgA Mixed Fem Dat) => str_1 + "en" ;
+    Attr (sgA Mixed Fem Acc) => str_1 + "e" ;
+    Attr (sgA Mixed Neut Nom) => str_1 + "es" ;
+    Attr (sgA Mixed Neut Gen) => str_1 + "en" ;
+    Attr (sgA Mixed Neut Dat) => str_1 + "en" ;
+    Attr (sgA Mixed Neut Acc) => str_1 + "es" ;
+    --------------------------------
+    Attr (plA Strong Nom) => str_1 + "e" ;
+    Attr (plA Strong Gen) => str_1 + "er" ;
+    Attr (plA Strong Dat) => str_1 + "en" ;
+    Attr (plA Strong Acc) => str_1 + "e" ;
+    Attr (plA Weak Nom) => str_1 + "en" ;
+    Attr (plA Weak Gen) => str_1 + "en" ;
+    Attr (plA Weak Dat) => str_1 + "en" ;
+    Attr (plA Weak Acc) => str_1 + "en" ;
+    -- < MIXED PlA>
+    Attr (plA Mixed Nom) => str_1 + "e" ;
+    Attr (plA Mixed Gen) => str_1 + "er" ;
+    Attr (plA Mixed Dat) => str_1 + "en" ;
+    Attr (plA Mixed Acc) => str_1 + "e" ;
+    --------------------------
+    Pred => str_1
+  }} ;
+
 
  --  kleine, kleine, klein, kleine, kleiner, kleine
   -- isPre --> isIndef 
