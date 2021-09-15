@@ -9,10 +9,10 @@ param
   -- VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
   
-  -- Use = Attr | Pred ;
   UseAP = Attr FormA | Pred ;
   AForm = Strong | Weak | Mixed ;
   FormA = sgA AForm Gender Case | plA AForm Case ;
+
 
 oper
   --  define types:

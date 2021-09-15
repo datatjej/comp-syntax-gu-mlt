@@ -10,18 +10,42 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     
     S  = {s : Str} ;
     -- gammal: VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --hl
-    VP = {verb : Verb ; compl : Adjective; isPron : Bool } ;
-    CN = Noun ;
+    VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
+    -- Adjective : Type = {s : UseAP => Str} ; -- UseAP = Attr FormA | Pred ; -- FormA = sgA AForm Gender Case | plA AForm Case ;
    -- NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
-    NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     Det = Determiner ;
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ; --transitive? 
     N = Noun ;      -- Noun: Type = {s : Number => Case => Str ; g : Gender};   Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number};
+    CN = Noun ;
+    NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
 
-    -- CN = {s : Number => Case => Str ; g : Gender} 
+-- TYSKA 
+-- N = {s : Adekl => Case => Str ; g : Gender ; n : Number} ; -- Adekl = st | sw | ge ;
+-- CN = {s : Number => Case => Str ; g : Gender} ;
+-- NP = {s : Case => Str ; g : Gender ; n : Number}
+
+-- AFRIKANS
+-- Noun = {s : Number => Case => Str ; g : Gender} ; -- NForm = NF Number Case ;
+-- NP = {s : NPCase => Str ; a : Agr ; isPron : Bool}
+
+-- saga
+-- N  = {s : Number => Definiteness => Str ; g : Gender ; dec : Declension } ;
+-- CN = Noun ** {isAdj : Bool} ;
+-- NP = {s : Case => Str ; a : AdjForm} ;
+
+-- ENGELSKA
+-- Noun : {s : Number => Str} ;
+-- CN = {s : Number => Str}
+-- NP = {s : Case => Str ; a : Agreement} ;  -- Agreement = Agr Number ;
+
+-- GF TYSKA:
+-- Noun = {s : Number => Case => Str, g : Gender} ; 
+-- NP = {s : PCase/Case => Str ; isPron : Bool }  -- PCase = NPC Case | NPP CPrep ; -- CPrep = 
+
+
     Adv = {s : Str} ;
     A,AP,Comp = Adjective ;
 
@@ -59,18 +83,25 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 	-- }
   --    };
 
-    UseV v = {           --sleep      V --> VP 
+    UseV v = {           --sleep      V --> VP      Verb : Type = {s : VForm => Str} ;   -- VForm = Inf | Pres Number Person ;
     verb = v ;
-    compl = \\_ => [] ;
+    compl = \\_ => [] ;             --  VP = {verb : Verb ; compl : Adjective; isPron : Bool } ;  --Adjective : Type = {s : UseAP => Str} ;
     isPron = False 
     } ;
 
     -- Saga
     -- UseV s = {
-    --  verb = s ;
-    --  compl = \\_ => [] ;
+    --  verb = s ;              -- Verb : Type = {s: Str} ;
+    --  compl = \\_ => [] ;      VP = {verb : Verb ; compl : AdjForm => Str} ; -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
     --  } ;
       
+  -- Herbert
+   -- UseV v = {       
+   --   verb = v ;  
+   --   compl = \\_,_ => [] ;          VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ;
+   --   isPron = False
+   --   } ;
+
    -- Engelska:
     -- UseV v = {
     --  verb = v ;
@@ -148,6 +179,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     n = det.n;
     isPron = False
     } ;
+
+    -- gf ty: s = \\c => det.s ! cn.g ! c
 
     --  lin DetCN det cn = {
    -- s = \\c => det.s ! cn.g ! c ++ cn.s ! det.n ;
