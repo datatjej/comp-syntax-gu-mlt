@@ -173,36 +173,24 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
    UsePron p = p ** { det = "" ; isPron = True } ;
 
-
+  -- Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
    
-  a_Det = {s = table {Masc => table {Sg => table {Nom => "ein" ;
+  a_Det = {s = table {Masc => table          {Nom => "ein" ;
                                               Gen => "eines" ;
                                               Dat => "einem" ;
                                               Acc => "einen" } ;
-                                    Pl => table {Nom => "einige" ;
-                                              Gen => "einiger" ;
-                                              Dat => "einigen" ;
-                                              Acc => "einige" }  
-                                              } ;
-                      Fem => table {Sg => table {Nom => "eine" ;
+                      
+                      Fem => table {Nom => "eine" ;
                                               Gen => "einer" ;
                                               Dat => "einer" ;
                                               Acc => "eine" } ;
-                                  Pl => table {Nom => "einige" ;
-                                              Gen => "einiger" ;
-                                              Dat => "einigen" ;
-                                              Acc => "einige" } 
-                                  } ;
-                      Neut => table {Sg => table {Nom => "ein" ;
+                      
+                      Neut => table         {Nom => "ein" ;
                                               Gen => "eines" ;
                                               Dat => "einem" ;
-                                              Acc => "ein" } ;
-                                    Pl =>  table {Nom => "einige" ;
-                                              Gen => "einiger" ;
-                                              Dat => "einigen" ;
-                                              Acc => "einige" } 
-                                    
-                                    }} ;
+                                              Acc => "ein" } 
+                      } ;
+          n = Sg;
           d = Mixed };          
 
 
@@ -212,57 +200,83 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
        _ => ""
      }
     };
-    n = Pl
+    n = Pl;
+    d = Strong
     };
 
   -----------------------
 
       the_Det = {s = table {Masc => table 
-                              {Sg => table 
                                 {Nom => "der" ; 
                                 Gen => "des" ;
                                 Dat => "dem" ;
-                                Acc => "den" }} ;
+                                Acc => "den" } ;
                           Fem => table 
-                              {Sg => table 
                                 {Nom => "die" ;
                                 Gen => "der" ;
                                 Dat => "der" ;
-                                Acc => "die" }} ;
+                                Acc => "die" } ;
                            Neut => table 
-                              {Sg => table 
                                 {Nom => "das" ;
                                 Gen => "des" ;
                                 Dat => "dem" ;
-                                Acc => "das" }}} ;
-                d = Weak }; -- STÄMMER d?
+                                Acc => "das" }} ;
+                n = Sg;
+                d = Weak };
 
       thePl_Det = {s = table {Masc => table 
-                          {Pl => table 
                             {Nom => "die" ; 
                             Gen => "der" ;
                             Dat => "den" ;
-                            Acc => "die" }} ;
+                            Acc => "die" } ;
                       Fem => table 
-                          {Pl => table 
                             {Nom => "die" ;
                             Gen => "der" ;
                             Dat => "den" ;
-                            Acc => "die" }} ;
+                            Acc => "die" } ;
                         Neut => table 
-                          {Pl => table 
                             {Nom => "die" ;
                             Gen => "der" ;
                             Dat => "den" ;
-                            Acc => "die" }}};
-                d = Weak }; -- STÄMMER d?
+                            Acc => "die" }};
+                n = Pl;
+                d = Weak }; 
 
   UseN n = n ;
 
+  -- Adjective : Type = {s : UseAP => Str} ;
+  -- Noun: Type = {s : Number => Case => Str ; g : Gender};
+
     AdjCN ap cn = {  -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
-    s = \\n,c => ap.s ! cn.g ! n ++ cn.s ! n ! c ;
-    g = cn.g
-    } ;
+      s = \\n,d,c =>
+      ap.s ! (case n of {Pl => case d of {Strong => plA Strong c;
+                                        Weak => plA Weak c;
+                                        Mixed => plA Mixed c}; 
+                        Sg => case d of {Strong => sgA Strong cn.g c; 
+                                        Weak => sgA Weak cn.g c;
+                                        Mixed => sgA Mixed cn.g c}}) 
+                                          ++ cn.s ! n ! c ! d ;
+
+      g = cn.g ;
+      } ; 
+
+--Attr (sgA Strong Fem Gen) 
+--FormA = sgA AForm Gender Case | plA AForm Case ;
+-- saga: AdjForm = AdjSg Gender Definiteness | AdjPl ;
+
+
+    -- SAGA:
+    --    AdjCN ap cn = {
+    --  s = \\n,d =>
+    --  ap.s ! (case n of {Pl => AdjPl ; 
+    --                      Sg => case d of {Def => AdjSg cn.g Def ; 
+    --                                      Indef => AdjSg cn.g Indef}}) 
+    --                                      ++ cn.s ! n ! d ;
+    --
+    --  g = cn.g ;
+   --   dec = cn.dec ;
+   --   isAdj = True
+   --   } ; 
 
     PositA a = a ;
 
