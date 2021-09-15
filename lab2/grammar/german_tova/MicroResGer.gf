@@ -216,7 +216,8 @@ oper
   -- two-place verb with "case" as preposition; for transitive verbs, c=[]
 
   -- Verb2 : Type = Verb ** {c : Str} ; -- engelska
-  Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
+  Verb2 : Type = Verb ** {c : Str};
+  -- {c : Gender => Number => Str} ; 
 
   be_Verb : Verb = mkVerb "sein" "bin" "bist" "ist" "sind" "seid" "sind";
 

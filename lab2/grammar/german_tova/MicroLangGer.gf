@@ -18,9 +18,13 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ; --transitive? 
-    N = Noun ;      -- Noun: Type = {s : Number => Case => Str ; g : Gender};   Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number};
-    CN = Noun ;
+    N = {s :   Number => Case => Str ; g : Gender};      -- Noun: Type = {s : Number => Case => Str ; g : Gender};   Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number};
+    CN = {s :  Number => Case => Str ; g : Gender};
     NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
+    Adv = {s : Str} ;
+    A,AP,Comp = Adjective ;
+
+   
 
 -- TYSKA 
 -- N = {s : Adekl => Case => Str ; g : Gender ; n : Number} ; -- Adekl = st | sw | ge ;
@@ -45,9 +49,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 -- Noun = {s : Number => Case => Str, g : Gender} ; 
 -- NP = {s : PCase/Case => Str ; isPron : Bool }  -- PCase = NPC Case | NPP CPrep ; -- CPrep = 
 
-
-    Adv = {s : Str} ;
-    A,AP,Comp = Adjective ;
 
     --hl: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
     -- min: Adjective : Type = {s : UseAP => Str} ; --> Attr (sgA AForm Gender Case) | Pred;
@@ -110,7 +111,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       
      ComplV2 v2 np = {           -- V2 -> NP -> VP        -- love it                      
       verb = v2 ;                                         -- Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
-      compl = \\_,_ => v2.c ! np.g ! np.n ++ np.s ! Acc;       -- NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
+      compl = \\_ => v2.c ++ np.s ! Acc;         -- NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
+      
       isPron = np.isPron --;                              -- VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
 	    --adv = []
 	   } ;
@@ -167,8 +169,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     -- AdvVP vp adv =
     --  vp ** {compl = vp.compl ++ adv.s} ;
 
-    -- HERBERT:
-    AdvVP vp adv =                                          -- VP -> Adv -> VP
+    -- saga
+    AdvVP vp adv =                                          -- VP -> Adv -> VP       --sleep here
       vp ** {compl = \\a => vp.compl ! a ++ adv.s} ;  
 
   -- Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
@@ -280,39 +282,76 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
   UseN n = n ;
 
-  -- Adjective : Type = {s : UseAP => Str} ;
-  -- Noun: Type = {s : Number => Case => Str ; g : Gender};
+  -- funkar:
+  -- AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+  --   s = \\n,c => ap.s ! Attr (sgA Strong cn.g Nom) ++ cn.s ! n ! c;
+  --   g = cn.g 
+  -- } ; 
 
-    AdjCN ap cn = {  -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
-      s = \\n,d,c =>
-      ap.s ! (case n of {Pl => case d of {Strong => plA Strong c;
-                                        Weak => plA Weak c;
-                                        Mixed => plA Mixed c}; 
-                        Sg => case d of {Strong => sgA Strong cn.g c; 
-                                        Weak => sgA Weak cn.g c;
-                                        Mixed => sgA Mixed cn.g c}}) 
-                                          ++ cn.s ! n ! c ! d ;
-
-      g = cn.g ;
+-- funkar:
+  AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+     s = \\n,c =>
+      ap.s ! Attr (case n of {Pl => plA Strong c;  
+                        Sg => sgA Strong cn.g c}) 
+                        ++ cn.s ! n ! c;                   -- CN : Type = {s : Number => Case => Str ; g : Gender};
+      g = cn.g 
       } ; 
+
+ -- funkar ej:
+-- AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+--      s = \\n,d,c =>
+--      ap.s ! Attr (case n of {Pl => plA Strong c; 
+--                        Sg => case d of {Strong => sgA Strong cn.g c}}) 
+--                        ++ cn.s ! n ! c;                                -- CN : Type = {s : Number => Case => Str ; g : Gender};
+--      g = cn.g 
+--      } ; 
+
+
+--    AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+--      s = \\n,d,c =>
+--      ap.s ! Attr (case n of {Pl => case d of {Strong => plA Strong c;        -- Adjective : Type = {s : UseAP => Str} ; 
+--                                        Weak => plA Weak c;              -- UseAP = Attr FormA | Pred ; -- FormA = sgA AForm Gender Case | plA AForm Case ;
+--                                        Mixed => plA Mixed c}; 
+--                        Sg => case d of {Strong => sgA Strong cn.g c; 
+--                                        Weak => sgA Weak cn.g c;
+--                                        Mixed => sgA Mixed cn.g c}}) 
+--                                          ++ cn.s ! d ! n ! c;            -- CN : Type = {s : Number => Case => Str ; g : Gender};
+--      g = cn.g 
+--      } ; 
+
+
+-- herbert:
+--  AdjCN ap cn = {
+--      s = table {
+--	      n => case ap.isPre of {                             -- AP = {s : Gender => Number => Str ; isPre : Bool } ;
+--	   True => ap.s ! cn.g ! n ++ cn.s ! n ;
+--	   False => cn.s ! n ++ ap.s ! cn.g ! n                   -- CN = {s : Number => Str ; g : Gender } ;
+--	  }
+--	};
+--     g = cn.g
+--     } ;
+
+--  saga:
+--    AdjCN ap cn = {
+--      s = \\n,d =>
+--      ap.s ! (case n of {Pl => AdjPl ;                                                        
+--                          Sg => case d of {Def => AdjSg cn.g Def ;      -- Adjective : Type = {s : AdjForm => Str } ; -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
+--                                          Indef => AdjSg cn.g Indef}}) 
+--                                          ++ cn.s ! n ! d ;             -- CN = {s : Number => Definiteness => Str ; g : Gender ; dec : Declension } ** {isAdj : Bool} ;
+--
+--      g = cn.g ;
+--      dec = cn.dec ;
+--      isAdj = True
+--      } ; 
 
 --Attr (sgA Strong Fem Gen) 
 --FormA = sgA AForm Gender Case | plA AForm Case ;
 -- saga: AdjForm = AdjSg Gender Definiteness | AdjPl ;
 
-
-    -- SAGA:
-    --    AdjCN ap cn = {
-    --  s = \\n,d =>
-    --  ap.s ! (case n of {Pl => AdjPl ; 
-    --                      Sg => case d of {Def => AdjSg cn.g Def ; 
-    --                                      Indef => AdjSg cn.g Indef}}) 
-    --                                      ++ cn.s ! n ! d ;
-    --
-    --  g = cn.g ;
-   --   dec = cn.dec ;
-   --   isAdj = True
-   --   } ; 
+  -- engelska:
+  --  AdjCN ap cn = {
+  --    s = table {n => ap.s ++ cn.s ! n}
+  --    } ;
 
     PositA a = a ;
 
@@ -484,13 +523,13 @@ oper
 
    mkV2 = overload {
     mkV2 : Str -> V2                                              -- predictable verb with direct object, e.g. "wash"
-      = \s   -> lin V2 (smartVerb s ** {c = \\g, n => []}) ;
+      = \s   -> lin V2 (smartVerb s ** {c = []}); -- {c = \\g, n => []}) ;
     mkV2 : Str -> Str -> V2                                      -- predictable verb with preposition, e.g. "wait - for"
-      = \s,p -> lin V2 (smartVerb s ** {c = \\g, n => p}) ;
+      = \s,p -> lin V2 (smartVerb s ** {c = p}) ; -- \\g, n => p}) ;
     mkV2 : V -> V2                                                -- any verb with direct object, e.g. "drink"
-      = \v   -> lin V2 (v ** {c = \\g, n => []}) ;
+      = \v   -> lin V2 (v ** {c = []}); -- \\g, n => []}) ;
     mkV2 : V -> Str -> V2                                         -- any verb with preposition
-      = \v,p -> lin V2 ( v ** {c = \\g, n => p}) ;
+      = \v,p -> lin V2 ( v ** {c = p}); --\\g, n => p}) ;
     } ;
 
 -- HERBERT:  
