@@ -85,15 +85,15 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
     UseV v = {           --sleep      V --> VP      Verb : Type = {s : VForm => Str} ;   -- VForm = Inf | Pres Number Person ;
     verb = v ;
-    compl = \\_ => [] ;             --  VP = {verb : Verb ; compl : Adjective; isPron : Bool } ;  --Adjective : Type = {s : UseAP => Str} ;
+    compl = \\_ => [] ;             --  VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
     isPron = False 
     } ;
 
     -- Saga
     -- UseV s = {
-    --  verb = s ;              -- Verb : Type = {s: Str} ;
-    --  compl = \\_ => [] ;      VP = {verb : Verb ; compl : AdjForm => Str} ; -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
-    --  } ;
+    -- verb = s ;              -- Verb : Type = {s: Str} ;
+    -- compl = \\_ => [] ;      VP = {verb : Verb ; compl : AdjForm => Str} ; -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
+    -- } ;
       
   -- Herbert
    -- UseV v = {       
@@ -107,29 +107,32 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     --  verb = v ;
     --  compl = [] ;
     --  } ;
-
       
-     ComplV2 v2 np = {
-      verb = v2 ;
-      compl = \\g, n => v2.c ! g ! n ++ np.s ! Acc ; -- NP object in the accusative, preposition first  
-      isPron = np.isPron ;
-	    adv = []
+     ComplV2 v2 np = {           -- V2 -> NP -> VP        -- love it                      
+      verb = v2 ;                                         -- Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
+      compl = \\_,_ => v2.c ! np.g ! np.n ++ np.s ! Acc;       -- NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
+      isPron = np.isPron --;                              -- VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
+	    --adv = []
 	   } ;
-
 
     -- herbert 
     --  ComplV2 v2 np = {
-    --  verb = v2 ;
-    --  compl = \\_,_ => v2.c.con ! np.g ! np.n ++ np.det ++ np.s ! Acc ;  -- NP object in the accusative, preposition first
-    --  isPron = np.isPron 
+    --  verb = v2 ;                                                        -- Verb2 : Type = Verb ** {c : Preposition } -- Verb : Type = {s : VForm => Str ; aux : Aux } ;
+    --  compl = \\_,_ => v2.c.con ! np.g ! np.n ++ np.det ++ np.s ! Acc ;  -- NP = {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ;
+    --  isPron = np.isPron                                                 --  VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ;
     --  } ;
 
     -- engelska
     --  ComplV2 v2 np = {
     --  verb = v2 ;
-    --  compl = v2.c ++ np.s ! Acc  -- NP object in the accusative, preposition first
+    --  compl = v2.c ++ np.s ! Acc  -- NP = {s : Case => Str ; a : Agreement} ;
     --  } ;
 
+    -- saga
+    -- ComplV2 v2 np = {
+    -- verb = v2 ;                         -- Verb2 : Type = Verb ** {c : Str} ;
+    -- compl = \\_ => v2.c ++ np.s ! Acc   -- NP = {s : Case => Str ; a : AdjForm} ;   -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
+    --  } ;                                -- VP = = {verb : Verb ; compl : AdjForm => Str} ;
     
     UseComp comp = {
       verb = be_Verb ;
@@ -165,8 +168,8 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     --  vp ** {compl = vp.compl ++ adv.s} ;
 
     -- HERBERT:
-    AdvVP vp adv =
-      vp ** {compl = \\g,n => vp.compl ! g ! n ++ adv.s} ;  
+    AdvVP vp adv =                                          -- VP -> Adv -> VP
+      vp ** {compl = \\a => vp.compl ! a ++ adv.s} ;  
 
   -- Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
   -- Noun: Type = {s : Number => Case => Str ; g : Gender};

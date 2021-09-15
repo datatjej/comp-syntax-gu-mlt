@@ -214,7 +214,6 @@ oper
 
   
   -- two-place verb with "case" as preposition; for transitive verbs, c=[]
-  -- Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
 
   -- Verb2 : Type = Verb ** {c : Str} ; -- engelska
   Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
