@@ -61,7 +61,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     s = case np.isPron of {
 	  True => case np.n of { Sg => np.s ! Nom ; Pl => "" } ;
 	  False => np.s ! Nom
-	  } ++ vp.verb.s ! Pres np.n P3 ++ vp.compl.s ! Pred -- ÄNDRA TILL ATTR??
+	  } ++ vp.verb.s ! Pres np.n P3 ++ vp.compl ! Pred -- ÄNDRA TILL ATTR??
     };
 
 
