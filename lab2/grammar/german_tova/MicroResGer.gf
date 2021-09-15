@@ -9,9 +9,9 @@ param
   -- VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
   
-  --Use = Attr | Pred ;
-  UseAP = Attr FormA | Pred;
-  AForm = Strong | Weak | Mixed ;  --Adekl = strong | weak | mixed ;
+  -- Use = Attr | Pred ;
+  UseAP = Attr FormA | Pred ;
+  AForm = Strong | Weak | Mixed ;
   FormA = sgA AForm Gender Case | plA AForm Case ;
 
 oper
@@ -21,8 +21,10 @@ oper
   --- AFORM = ADEKL
 
   Noun: Type = {s : Number => Case => Str ; g : Gender};
+  -- Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number}; -- ÄNDRAD ENLIGT TY
 
-  Determiner: Type = {s: Gender => Number => Case => Str ; d : AForm}; -- ÄNDRAD ENLIGT TY
+  -- Determiner: Type = {s: Gender => Number => Case => Str ; d : AForm}; -- ÄNDRAD ENLIGT TY
+  Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
 
   mkNoun : (sg, genSg, pl : Str) -> Gender -> Noun = 
     \sg,genSg,pl,g -> {

@@ -9,20 +9,21 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Utt = {s : Str} ;
     
     S  = {s : Str} ;
-    VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --hl
+    -- gammal: VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --hl
+    VP = {verb : Verb ; compl : Adjective; isPron : Bool } ;
     CN = Noun ;
    -- NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
-    NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ;
+    NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     Det = Determiner ;
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ; --transitive? 
-    N = Noun ;
+    N = Noun ;      -- Noun: Type = {s : Number => Case => Str ; g : Gender};   Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number};
+
+    -- CN = {s : Number => Case => Str ; g : Gender} 
     Adv = {s : Str} ;
-    A = Adjective ;
-    AP = Adjective ;
-    Comp = Adjective;
+    A,AP,Comp = Adjective ;
 
     --hl: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
     -- min: Adjective : Type = {s : UseAP => Str} ; --> Attr (sgA AForm Gender Case) | Pred;
@@ -31,34 +32,19 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     UttS s = s ;
     
     UttNP np = {s = np.s ! Acc} ;
-
-  -- REMOVE:
-  -- UseA a = {s = a.s} ;
-    -- AttrAP : AP -> CN;
-    --AttrAP ap cn = {s = ap.s ++ cn.s} ;
-    -- PredAP : NP -> be_Verb -> AP -> S ;
-    -- PredAP np cop ap = {s = np.s ++ cop.s ++ ap.s} ;
     
+    PredVPS np vp = {                      --- John walks
+    s = case np.isPron of {
+	  True => case np.n of { Sg => np.s ! Nom ; Pl => "" } ;
+	  False => np.s ! Nom
+	  } ++ vp.verb.s ! Pres np.n P3 ++ vp.compl.s ! Pred -- ÄNDRA TILL ATTR??
+    };
 
- -- PredVPS np vp = {
---	s = np.s ! Nom ++
---	case vp.isPron of {
---	  True => vp.compl ! np.g ! np.n ++ vp.verb.s ! agr2vform np.n ++ vp.adv;
---	  False => vp.verb.s ! agr2vform np.n ++ vp.compl ! np.g ! np.n ++ vp.adv
---	}
---	};
 
   -- ENGELSKA:
   -- PredVPS np vp = {
-  --    s = np.s ! Nom ++ vp.verb.s ! agr2vform np.a ++ vp.compl -- Nom subject + NP.agreement + vp.compl
+  --    s = np.s ! Nom ++ vp.verb.s ! agr2vform np.a ++ vp.compl
    --   } ;
-
-     PredVPS np vp = {
-      s = case np.isPron of {
-	  True => case np.n of { Sg => np.s ! Nom ; Pl => "" } ;
-	  False => np.s ! Nom
-	  } ++ vp.verb.s ! Pres np.n P3 ++ vp.compl ! np.g ! np.n
-    };
   
   -- HERBERT:
   -- PredVPS np vp = {
@@ -73,12 +59,24 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 	-- }
   --    };
 
-    UseV v = {
+    UseV v = {           --sleep      V --> VP 
     verb = v ;
-    compl = \\g, n => [] ;
-	  isPron = False ; 
-	  adv = []
-      } ;
+    compl = \\_ => [] ;
+    isPron = False 
+    } ;
+
+    -- Saga
+    -- UseV s = {
+    --  verb = s ;
+    --  compl = \\_ => [] ;
+    --  } ;
+      
+   -- Engelska:
+    -- UseV v = {
+    --  verb = v ;
+    --  compl = [] ;
+    --  } ;
+
       
      ComplV2 v2 np = {
       verb = v2 ;
@@ -86,16 +84,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       isPron = np.isPron ;
 	    adv = []
 	   } ;
-
-
-      -- LIINA:
-      -- ComplV2 v2 np = {
-     -- verb = v2 ;
-     -- compl = \\g,n => v2.c ! g ! n ++ np.s ! Acc ; -- NP object in the accusative, preposition first
-     -- isPron = np.isPron ;
-     -- adv = []
-     --  } ;
-
 
 
     -- herbert 
@@ -113,11 +101,24 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
     
     UseComp comp = {
-      verb = be_Verb ;     -- the verb is the copula "be"
-      compl = \\g,n => comp.s ! g ! n ;
-	    isPron = False ;
-	    adv = []
-    } ;
+      verb = be_Verb ;
+      compl = \\_ => comp.s ! Pred ;
+      isPron = False 
+    };
+
+    -- UseComp comp = {             -- be small
+    --  verb = be_Verb ;     -- the verb is the copula "be"
+    --  compl = \\g,n => comp.s ! g ! n ;
+	  --  isPron = False ;
+	 --   adv = []
+    --} ;
+
+    -- herbert:
+    -- UseComp comp = {
+    --  verb = be_Verb ;     -- the verb is the copula "be"
+    --  compl = comp.s ;
+    --  isPron = False ;
+    --  } ;
 
     CompAP ap = {s = \\_ => ap.s ! Pred} ;  -- Afrikans lib/src/afrikaans/VerbAfr.gf:  CompAP ap = {s = \\_ => ap.s ! APred} ;
 
@@ -136,12 +137,39 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     AdvVP vp adv =
       vp ** {compl = \\g,n => vp.compl ! g ! n ++ adv.s} ;  
 
-    DetCN det cn = {
+  -- Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
+  -- Noun: Type = {s : Number => Case => Str ; g : Gender};
+  -- NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
+
+
+    DetCN det cn = {            -- Det -> CN -> NP ;
     s = \\c => det.s ! cn.g ! c ++ cn.s ! det.n ! c ;
-    n = det.n;
     g = cn.g;
+    n = det.n;
     isPron = False
     } ;
+
+    --  lin DetCN det cn = {
+   -- s = \\c => det.s ! cn.g ! c ++ cn.s ! det.n ;
+   -- a = agr cn.g det.n Per3
+   -- }
+
+    -- herbert:               -- Det = {s : Gender => Str ; n : Number} ;  Noun : Type = {s : Number => Str ; g : Gender } ;
+    -- DetCN det cn = {  
+    --  s = \\c => cn.s ! det.n ;
+    --  det = det.s ! cn.g ;
+    --  n = det.n ;
+    --  g = cn.g ;
+    --  isPron = False 
+    --  } ;
+
+
+  -- afrikans:
+   --     DetCN det cn = {
+   --   s = \\c => det.s ! cn.g ++ cn.s ! det.a ! NF det.n Nom ; -- kan dalk vereenvoudig (2011-01-14)
+   --   a = agrP3 det.n ;
+   --   isPron = False
+   --   } ;
 
    UsePron p = p ** { det = "" ; isPron = True } ;
 
