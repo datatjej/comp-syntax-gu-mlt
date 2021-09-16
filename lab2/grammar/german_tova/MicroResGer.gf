@@ -17,11 +17,7 @@ param
 oper
   --  define types:
 
-  -- FormA = sgA (_ : {Adekl} ) (_ : {Gender} ) (_ : {Case} ) | plA (_ : {Adekl} ) (_ : {Case} ) ;
-  --- AFORM = ADEKL
-
   Noun: Type = {s : Number => Case => Str ; g : Gender};
-  -- Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number}; -- ÄNDRAD ENLIGT TY
 
   -- Determiner: Type = {s: Gender => Number => Case => Str ; d : AForm}; -- ÄNDRAD ENLIGT TY
   Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
@@ -45,6 +41,10 @@ oper
     g = g
     } ;
 
+vowel : pattern Str
+= #("a" | "e" | "i" | "o" | "u") ;
+consonant : pattern Str
+= #("b" |"d" |"g" |"l" |"m" |"n" |"p" |"r" |"t" |"z") ;
       
  smartNoun : Str -> Noun = \sg -> case sg of {
     _ + ("ik"|"au"|"ilch"|"e")    => regNounFem sg;
@@ -53,7 +53,8 @@ oper
     -- _ => error ("No smarts for nouns here: " ++ sg)
    } ;
 
-
+  -- Katzeen, Blumeen
+  
   regNounMasc : Str -> Noun = \tier ->
     let
       tier = tier;
@@ -72,6 +73,8 @@ oper
     mkNoun 
       frau frau frauen
       Fem ;
+
+  
 
   regNounNeut : Str -> Noun = \baby ->
     let
@@ -201,8 +204,8 @@ oper
 
 --   -- regular verbs with predictable variations
     smartVerb : Str -> Verb = \inf -> case inf of {
+      war + "ten" => regVerb2 inf war ;     -- warten, töten, finden 
       seh + "en" => regVerb inf seh ;
-      war + "ten" => regVerb2 inf war ;
       -- dorm + "ire" => verb3ire inf dorm dorm ;
       _ => error ("No smarts for verbs here: " ++ inf)
       } ;
