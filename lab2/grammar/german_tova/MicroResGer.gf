@@ -20,35 +20,30 @@ oper
 
   Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
 
-  mkNoun : (sg, genSg, pl : Str) -> Gender -> Noun = 
-    \sg,genSg,pl,g -> {
+  mkNoun : (sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen : Str) -> Gender -> Noun = 
+    \sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen,g -> {
     s = table {
       Sg => table {
-        Nom => sg ;
-        Acc => sg ;
-        Dat => sg ;
-        Gen => genSg
+        Nom => sgNom ;
+        Acc => sgAcc ;
+        Dat => sgDat ;
+        Gen => sgGen
         } ;
       Pl => table {
-        Nom => pl ;
-        Acc => pl ;
-        Dat => pl + "n" ;
-        Gen => pl
+        Nom => plNom ;
+        Acc => plAcc ;
+        Dat => plDat ;
+        Gen => plGen
         }
       } ;
     g = g
     } ;
-
-vowel : pattern Str
-= #("a" | "e" | "i" | "o" | "u") ;
-consonant : pattern Str
-= #("b" |"d" |"g" |"l" |"m" |"n" |"p" |"r" |"t" |"z") ;
       
  smartNoun : Str -> Noun = \sg -> case sg of {
-    _ + ("ik"|"au"|"ilch"|"e")    => regNounFem sg;
-    _ + ("ier"|"erd"|"und"|"iff"|"ern"|"ein")					    => regNounMasc sg;
-    _ + ("o"|"y")   			=> regNounNeut sg
-    -- _ => error ("No smarts for nouns here: " ++ sg)
+    _ + ("ik"|"au"|"ilch"|"e")                => regNounFem sg;
+    _ + ("ier"|"erd"|"und"|"iff"|"ern"|"ein")	=> regNounMasc sg;
+    _ + ("o"|"y")   			                    => regNounNeut sg;
+    _ => error ("No smarts for nouns here: " ++ sg)
    } ;
 
   -- Katzeen, Blumeen
@@ -57,10 +52,12 @@ consonant : pattern Str
     let
       tier = tier;
       tiere = tier + "e";
+      tieren = tier + "en";
       tieres = tier + "es";
     in
     mkNoun 
-      tier tieres tiere
+      tier tier tier tieres 
+      tiere tiere tieren tiere
       Masc ;
 
     regNounFem : Str -> Noun = \frau ->
@@ -69,7 +66,8 @@ consonant : pattern Str
       frauen = frau + "en";
     in
     mkNoun 
-      frau frau frauen
+      frau frau frau frau
+      frauen frauen frauen frauen
       Fem ;
 
   regNounNeut : Str -> Noun = \baby ->
@@ -78,7 +76,8 @@ consonant : pattern Str
       babys = baby + "s";
     in
     mkNoun 
-      baby babys babys
+      baby baby baby babys 
+      babys babys babys babys
       Neut ;
 
   Adjective : Type = {s : UseAP => Str} ;
@@ -141,9 +140,6 @@ consonant : pattern Str
   }} ;
 
 
- --  kleine, kleine, klein, kleine, kleiner, kleine
-  -- isPre --> isIndef 
-
   Verb : Type = {s : VForm => Str} ;
 
    mkVerb : (inf,sg1,sg2,sg3,pl1,pl2,pl3 : Str) -> Verb
@@ -204,7 +200,6 @@ consonant : pattern Str
 	    } 
     } ;
 
-
     -- regular verbs with predictable variations
     smartVerb : Str -> Verb = \inf -> case inf of {
       fin + "den" => regVerb3 inf fin ;     -- finden
@@ -218,12 +213,9 @@ consonant : pattern Str
       let verb = smartVerb inf 
 	  in mkVerb inf sg1 sg2 sg3 pl1 pl2 pl3;
 
-  
   -- two-place verb with "case" as preposition; for transitive verbs, c=[]
 
-  -- Verb2 : Type = Verb ** {c : Str} ; -- engelska
-  Verb2 : Type = Verb ** {c : Str};
-  -- {c : Gender => Number => Str} ; 
+  Verb2 : Type = Verb ** {c : Str};  --tidigare: {c : Gender => Number => Str} ; 
 
   be_Verb : Verb = mkVerb "sein" "bin" "bist" "ist" "sind" "seid" "sind";
 
