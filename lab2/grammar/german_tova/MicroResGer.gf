@@ -165,7 +165,7 @@ consonant : pattern Str
 	    -- sehen
 	    Inf => inf ;
 	    -- seh + e
-	    Pres Sg P1 => stem + "e"; -- Sg P1? 
+	    Pres Sg P1 => stem + "e";
       Pres Sg P2 => stem + "st";
       Pres Sg P3 => stem + "t";
       Pres Pl P1 => inf;
@@ -180,7 +180,7 @@ consonant : pattern Str
 	    -- warten
 	    Inf => inf ;
 	    -- wart + e
-	    Pres Sg P1 => stem + "te"; -- Sg P1? 
+	    Pres Sg P1 => stem + "te"; 
       Pres Sg P2 => stem + "test";
       Pres Sg P3 => stem + "tet";
       Pres Pl P1 => inf;
@@ -189,13 +189,27 @@ consonant : pattern Str
 	    } 
     } ;
 
-    --TODO: stems ending in -t --> tött, warten --> tötet, wartet
+      regVerb3 : (inf,stem : Str) -> Verb
+      = \inf,stem -> {
+	    s = table {
+	    -- finden
+	    Inf => inf ;
+	    -- find + e
+	    Pres Sg P1 => stem + "de";
+      Pres Sg P2 => stem + "dest";
+      Pres Sg P3 => stem + "det";
+      Pres Pl P1 => inf;
+      Pres Pl P2 => stem + "det";
+      Pres Pl P3 => inf
+	    } 
+    } ;
 
---   -- regular verbs with predictable variations
+
+    -- regular verbs with predictable variations
     smartVerb : Str -> Verb = \inf -> case inf of {
-      war + "ten" => regVerb2 inf war ;     -- warten, töten, finden 
+      fin + "den" => regVerb3 inf fin ;     -- finden
+      war + "ten" => regVerb2 inf war ;     -- warten, töten
       seh + "en" => regVerb inf seh ;
-      -- dorm + "ire" => verb3ire inf dorm dorm ;
       _ => error ("No smarts for verbs here: " ++ inf)
       } ;
 
