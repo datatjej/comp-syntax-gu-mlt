@@ -6,7 +6,6 @@ param
   Person = P1 | P2 | P3 ; 
   Gender = Fem | Masc | Neut ;
   VForm = Inf | Pres Number Person ;
-  -- VType = Weak | Strong ; --needed? not sure
   Aux = haben | sein ;
   
   UseAP = Attr FormA | Pred ;
@@ -19,7 +18,6 @@ oper
 
   Noun: Type = {s : Number => Case => Str ; g : Gender};
 
-  -- Determiner: Type = {s: Gender => Number => Case => Str ; d : AForm}; -- ÄNDRAD ENLIGT TY
   Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
 
   mkNoun : (sg, genSg, pl : Str) -> Gender -> Noun = 
@@ -54,7 +52,7 @@ consonant : pattern Str
    } ;
 
   -- Katzeen, Blumeen
-  
+
   regNounMasc : Str -> Noun = \tier ->
     let
       tier = tier;
@@ -74,8 +72,6 @@ consonant : pattern Str
       frau frau frauen
       Fem ;
 
-  
-
   regNounNeut : Str -> Noun = \baby ->
     let
       baby = baby;
@@ -84,17 +80,10 @@ consonant : pattern Str
     mkNoun 
       baby babys babys
       Neut ;
-  
-
-  -- herbert: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
-
-  -- OLD: Adjective : Type = {s : Gender => Number => Str} ;
 
   Adjective : Type = {s : UseAP => Str} ;
 
-  -- NOTES: AdjForms : Type = { pred, mnom, macc, mdat, fnom, nnom : Str} 
-
-  mkAdjective : Str -> Adjective =         -- mkFormsA : {Comp} -> Str -> {UseAP} => Str = \c_0 -> \str_1 -> table ({UseAP} ) {
+  mkAdjective : Str -> Adjective =
         \str_1 -> { s = table {
     Attr (sgA Strong Masc Nom) => str_1 + "er" ;
     Attr (sgA Strong Masc Gen)=> str_1 + "es" ;
@@ -226,10 +215,6 @@ consonant : pattern Str
 
 -- Preposition : Type = {s : Str ; con : Gender => Number => Str} ;
 
- agr2vform : Number -> VForm = \a -> case a of {
-    Sg => Pres Sg P3 ;
-    Pl => Pres Pl P3 
-  } ;
 
 --}
 
