@@ -93,8 +93,8 @@ lin
   hypertensionIllness = mkNP (mkN "Hypertonie" "Hypertonie" "Hypertonie" "Hypertonie" "Hypertonien" "Hypertonien" "Hypertonien" "Hypertonien" Fem) ;
 
   alcoholSubstance = mkNP (mkN "Alkohol") ;
-  medicineSubstance = mkNP a_Det (mkN "Medikamente") ;
-  drugsSubstance = mkNP aPl_Det (mkN "Drogen") ;
+  medicineSubstance = mkNP a_Det (mkN "Medizine" "Medizine" "Medizine" "Medizine" "Medizinen" "Medizinen" "Medizinen" "Medizinen" Fem) ;
+  drugsSubstance = mkNP aPl_Det (mkN "Droge" "Droge" "Droge" "Droge" "Drogen" "Drogen" "Drogen" "Drogen" Fem) ;
 
 oper
   pAdv : Str -> Adv = ParadigmsEng.mkAdv ;
