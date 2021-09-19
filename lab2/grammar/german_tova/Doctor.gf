@@ -13,6 +13,7 @@ cat
   Substance ;   -- drugs
   Illness ;     -- fever
 
+
 fun
   presPosPhrase      : Fact -> Phrase ;  -- she sleeps
   presNegPhrase      : Fact -> Phrase ;  -- she doesn't sleep
