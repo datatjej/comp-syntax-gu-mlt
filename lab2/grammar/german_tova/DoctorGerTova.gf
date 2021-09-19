@@ -65,34 +65,34 @@ lin
   drinkAction = mkVP (mkV "trinken") ;
   smokeAction = mkVP (mkV "rauchen") ;
   measureTemperatureAction = mkVP (mkV2 (mkV "messen")) (mkNP the_Det (mkN "Körpertemperatur")) ;
-  measureBloodPressureAction = mkVP (mkV2 (mkV "messen")) (mkNP the_Det (mkN "Blutdruck")) ;
+  measureBloodPressureAction = mkVP (mkV2 (mkV "messen")) (mkNP the_Det (mkN "Blutdruck" "Blutdruck" "Blutdruck" "Blutdruckes" "Blutdrücke" "Blutdrücke" "Blutdrücken" "Blutdrücke" Masc)) ;
 
   hospitalPlace = {at = pAdv "im Krankenhaus" ; to = pAdv "zum Krankenhaus"} ;
   homePlace = {at = pAdv "zu Hause" ; to = pAdv "nach Hause"} ;
   schoolPlace = {at = pAdv "in der Schule" ; to = pAdv "zur Schule"} ;
   workPlace = {at = pAdv "auf der Arbeit" ; to = pAdv "zur Arbeit"} ;
 
-  doctorProfession = mkCN (mkN "Doktor") ;
-  nurseProfession = mkCN (mkN "Krankenschwester") ;
-  interpreterProfession = mkCN (mkN "Übersetzer") ;
+  doctorProfession = mkCN (mkN "Doktor" "Doktor" "Doktor" "Doktors" "Doktoren" "Doktoren" "Doktoren" "Doktoren" Masc) ;
+  nurseProfession = mkCN (mkN "Krankenschwester" "Krankenschwester" "Krankenschwester" "Krankenschwester" "Krankenschwestern" "Krankenschwestern" "Krankenschwestern" "Krankenschwestern" Fem) ;
+  interpreterProfession = mkCN (mkN "Übersetzer" "Übersetzer" "Übersetzer" "Übersetzers" "Übersetzer" "Übersetzer" "Übersetzern" "Übersetzer" Masc) ;
 
   bePregnantProperty = mkVP (mkA "schwanger") ;
   beIllProperty = mkVP (mkA "krank") ;
   beWellProperty = mkVP (mkA "gesund") ;
   beDeadProperty = mkVP (mkA "tot") ;
-  haveAllergiesProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Allergie")) ;
-  havePainsProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Schmerz")) ;
-  haveChildrenProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Kind" "Kinder")) ;
+  haveAllergiesProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Allergie" "Allergie" "Allergie" "Allergie" "Allergien" "Allergien" "Allergien" "Allergien" Fem)) ;
+  havePainsProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Schmerz" "Schmerz" "Schmerz" "Schmerzes" "Schmerzen" "Schmerzen" "Schmerzen" "Schmerzen" Masc)) ;
+  haveChildrenProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Kind" "Kind" "Kind" "Kindes" "Kinder" "Kinder" "Kindern" "Kinder" Neut)) ;
 
-  feverIllness = mkNP a_Det (mkN "Fieber") ;
-  fluIllness = mkNP a_Det (mkN "Grippe") ;
-  headacheIllness = mkNP a_Det (mkN "Kopfweh") ;
-  diarrheaIllness = mkNP a_Det (mkN "Durchfall") ;
-  heartDiseaseIllness = mkNP a_Det (mkN "Herzbeschwerden") ;
-  lungDiseaseIllness = mkNP a_Det (mkN "Lungbeschwerden") ;
-  hypertensionIllness = mkNP (mkN "Hypertension") ;
+  feverIllness = mkNP a_Det (mkN "Fieber" "Fieber" "Fieber" "Fiebers" "Fieber" "Fieber" "Fiebern" "Fieber" Neut) ;
+  fluIllness = mkNP a_Det (mkN "Grippe" "Grippe" "Grippe" "Grippe" "Grippen" "Grippen" "Grippen" "Grippen" Fem) ;
+  headacheIllness = mkNP a_Det (mkN "Kopfweh" "Kopfweh" "Kopfweh" "Kopfwehes" "Kopfwehe" "Kopfwehe" "Kopfwehen" "Kopfwehe" Neut) ;
+  diarrheaIllness = mkNP a_Det (mkN "Durchfall" "Durchfall" "Durchfall" "Durchfalles" "Durchfälle" "Durchfälle" "Durchfällen" "Durchfälle" Masc) ;
+  heartDiseaseIllness = mkNP a_Det (mkN "Herzkrankheit") ;
+  lungDiseaseIllness = mkNP a_Det (mkN "Lungkrankheit") ;
+  hypertensionIllness = mkNP (mkN "Hypertonie" "Hypertonie" "Hypertonie" "Hypertonie" "Hypertonien" "Hypertonien" "Hypertonien" "Hypertonien" Fem) ;
 
-  alcoholSubstance = mkNP (mkN "Alkohol") ; --der
+  alcoholSubstance = mkNP (mkN "Alkohol") ;
   medicineSubstance = mkNP a_Det (mkN "Medikamente") ;
   drugsSubstance = mkNP aPl_Det (mkN "Drogen") ;
 
