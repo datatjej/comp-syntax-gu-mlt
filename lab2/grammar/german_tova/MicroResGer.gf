@@ -41,7 +41,7 @@ oper
       
  smartNoun : Str -> Noun = \sg -> case sg of {
     _ + ("ik"|"au"|"ilch"|"e"|"ur")                => regNounFem sg;
-    _ + ("ier"|"erd"|"und"|"iff"|"ern"|"ein")	=> regNounMasc sg;
+    _ + ("ier"|"erd"|"und"|"iff"|"ern"|"ein"|"hol")	=> regNounMasc sg;
     _ + ("o"|"y")   			                    => regNounNeut sg;
     _ => error ("No smarts for nouns here: " ++ sg)
    } ;
