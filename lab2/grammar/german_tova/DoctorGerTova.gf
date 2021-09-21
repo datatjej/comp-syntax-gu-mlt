@@ -1,7 +1,7 @@
-concrete DoctorEng of Doctor =
+concrete DoctorGerTova of Doctor =
   open
-    SyntaxEng,
-    ParadigmsEng,
+    SyntaxGer,
+    ParadigmsGer,
     Prelude
   in {
 
@@ -56,55 +56,56 @@ lin
 --------------------------------
 
   coughAction = mkVP (mkV "husten") ;
-  breatheAction = mkVP (mkV "atmen" "atme" "atmest" "atmet" "atmen" "atmet" "atmen") ;
+  breatheAction = mkVP (mkV "atmen") ;
   vomitAction = mkVP (mkV "kotzen") ;
-  sleepAction = mkVP (mkV "schlafen") ;
-  undressAction = mkVP (mkVP take_V2 (mkNP thePl_Det (mkN "Kleider" "Kleider" "Kleidern" "Kleider" "Kleider" "Kleider" "Kleidern" "Kleider" Fem))) (pAdv "auf") ;
-  dressAction = mkVP (mkVP put_V2 (mkNP thePl_Det (mkN "Kleider" "Kleider" "Kleidern" "Kleider" "Kleider" "Kleider" "Kleidern" "Kleider" Fem))) (pAdv "an") ;
-  eatAction = mkVP (mkV "essen" "esse" "isst" "isst" "essen" "isst" "essen") ;
-  drinkAction = mkVP (mkV "trinken") ;
-  smokeAction = mkVP (mkV "rauchen") ;
-  measureTemperatureAction = mkVP (mkV2 (mkV "messen")) (mkNP the_Det (mkN "Körpertemperatur")) ;
-  measureBloodPressureAction = mkVP (mkV2 (mkV "messen")) (mkNP the_Det (mkN "Blutdruck" "Blutdruck" "Blutdruck" "Blutdruckes" "Blutdrücke" "Blutdrücke" "Blutdrücken" "Blutdrücke" Masc)) ;
+  sleepAction = mkVP (mkV "schlafen" "schläft" "schlief" "schliefe" "geschlafen") ;
+  dressAction = mkVP (reflV (mkV "an" (mkV "ziehen" "zieht" "zog" "zöge" "gezogen")) accusative) ;
+  undressAction = mkVP (reflV (mkV "aus" (mkV "ziehen" "zieht" "zog" "zöge" "gezogen")) accusative) ;
 
+  eatAction = mkVP (mkV "essen" "isst" "aß" "äße" "gegessen") ; 
+  drinkAction = mkVP (mkV "trinken" "trinkt" "trank" "tränke" "getrunken") ;
+  smokeAction = mkVP (mkV "rauchen") ;
+  measureTemperatureAction = mkVP (mkV2 (mkV "messen" "misst" "maß" "mäße" "gemessen")) (mkNP the_Det (mkN "Körpertemperatur" feminine)) ;
+  measureBloodPressureAction = mkVP (mkV2 (mkV "messen" "misst" "maß" "mäße" "gemessen")) (mkNP the_Det (mkN "Blutdruck")) ;
   hospitalPlace = {at = pAdv "im Krankenhaus" ; to = pAdv "zum Krankenhaus"} ;
   homePlace = {at = pAdv "zu Hause" ; to = pAdv "nach Hause"} ;
   schoolPlace = {at = pAdv "in der Schule" ; to = pAdv "zur Schule"} ;
   workPlace = {at = pAdv "auf der Arbeit" ; to = pAdv "zur Arbeit"} ;
 
-  doctorProfession = mkCN (mkN "Doktor" "Doktor" "Doktor" "Doktors" "Doktoren" "Doktoren" "Doktoren" "Doktoren" Masc) ;
-  nurseProfession = mkCN (mkN "Krankenschwester" "Krankenschwester" "Krankenschwester" "Krankenschwester" "Krankenschwestern" "Krankenschwestern" "Krankenschwestern" "Krankenschwestern" Fem) ;
-  interpreterProfession = mkCN (mkN "Übersetzer" "Übersetzer" "Übersetzer" "Übersetzers" "Übersetzer" "Übersetzer" "Übersetzern" "Übersetzer" Masc) ;
+  doctorProfession = mkCN (mkN "Doktor") ;
+  nurseProfession = mkCN (mkN "Krankenschwester" feminine) ;
+  interpreterProfession = mkCN (mkN "Übersetzer") ;
 
   bePregnantProperty = mkVP (mkA "schwanger") ;
   beIllProperty = mkVP (mkA "krank") ;
   beWellProperty = mkVP (mkA "gesund") ;
   beDeadProperty = mkVP (mkA "tot") ;
-  haveAllergiesProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Allergie" "Allergie" "Allergie" "Allergie" "Allergien" "Allergien" "Allergien" "Allergien" Fem)) ;
-  havePainsProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Schmerz" "Schmerz" "Schmerz" "Schmerzes" "Schmerzen" "Schmerzen" "Schmerzen" "Schmerzen" Masc)) ;
-  haveChildrenProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Kind" "Kind" "Kind" "Kindes" "Kinder" "Kinder" "Kindern" "Kinder" Neut)) ;
+  haveAllergiesProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Allergie")) ;
+  havePainsProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Schmerz")) ;
+  haveChildrenProperty = mkVP have_V2 (mkNP aPl_Det (mkN "Kind" "Kind" "Kind" "Kindes" "Kinder" "Kindern")) ;
 
-  feverIllness = mkNP a_Det (mkN "Fieber" "Fieber" "Fieber" "Fiebers" "Fieber" "Fieber" "Fiebern" "Fieber" Neut) ;
-  fluIllness = mkNP a_Det (mkN "Grippe" "Grippe" "Grippe" "Grippe" "Grippen" "Grippen" "Grippen" "Grippen" Fem) ;
-  headacheIllness = mkNP a_Det (mkN "Kopfweh" "Kopfweh" "Kopfweh" "Kopfwehes" "Kopfwehe" "Kopfwehe" "Kopfwehen" "Kopfwehe" Neut) ;
-  diarrheaIllness = mkNP a_Det (mkN "Durchfall" "Durchfall" "Durchfall" "Durchfalles" "Durchfälle" "Durchfälle" "Durchfällen" "Durchfälle" Masc) ;
+
+  feverIllness = mkNP a_Det (mkN "Fieber") ;
+  fluIllness = mkNP a_Det (mkN "Grippe") ;
+  headacheIllness = mkNP a_Det (mkN "Kopfweh") ;
+  diarrheaIllness = mkNP a_Det (mkN "Durchfall") ;
   heartDiseaseIllness = mkNP a_Det (mkN "Herzkrankheit") ;
   lungDiseaseIllness = mkNP a_Det (mkN "Lungkrankheit") ;
-  hypertensionIllness = mkNP (mkN "Hypertonie" "Hypertonie" "Hypertonie" "Hypertonie" "Hypertonien" "Hypertonien" "Hypertonien" "Hypertonien" Fem) ;
+  hypertensionIllness = mkNP (mkN "Hypertonie") ;
 
   alcoholSubstance = mkNP (mkN "Alkohol") ;
-  medicineSubstance = mkNP a_Det (mkN "Medizine" "Medizine" "Medizine" "Medizine" "Medizinen" "Medizinen" "Medizinen" "Medizinen" Fem) ;
-  drugsSubstance = mkNP aPl_Det (mkN "Droge" "Droge" "Droge" "Droge" "Drogen" "Drogen" "Drogen" "Drogen" Fem) ;
+  medicineSubstance = mkNP a_Det (mkN "Medizine") ;
+  drugsSubstance = mkNP aPl_Det (mkN "Droge") ;
 
 oper
-  pAdv : Str -> Adv = ParadigmsEng.mkAdv ;
+  pAdv : Str -> Adv = ParadigmsGer.mkAdv ;
 
-  go_V = mkV "gehen" ;
-  stay_V = mkV "bleiben" ;
-  need_V2 = mkV2 (mkV "brauchen") ;
-  take_V2 = mkV2 (mkV "nehmen" "nehme" "nimmst" "nimmt" "nehmen" "nehmt" "nehmen") ;
+  go_V = seinV (mkV "gehen" "geht" "ging" "ginge" "gegagen") ;
+  stay_V = seinV (mkV "bleiben" "bleibt" "blieb" "bliebe" "geblieben") ;
+  need_V2 = mkV2 (mkV "brauchen") ; 
+  take_V2 = mkV2 (mkV "nehmen" "nimmt" "nimm" "nahm" "nähme" "genommen") ;
   put_V2 = mkV2 (mkV "legen") ;
+  undress_V = reflV (mkV "ausziehen") ;
   vaccinate_V2 = mkV2 (mkV "impfen") ;
-  examine_V2 = mkV2 (mkV "untersuchen") ;
-
+  examine_V2 = mkV2 (mkV "untersuchen" "untersucht" "untersuche" "untersuchte" "untersucht") ;
 }
