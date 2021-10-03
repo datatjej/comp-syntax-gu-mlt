@@ -50,7 +50,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       isPron = False 
     };
 
-    CompAP ap = {s = \\_ => ap.s ! Pred} ;  -- Afrikans lib/src/afrikaans/VerbAfr.gf:  CompAP ap = {s = \\_ => ap.s ! APred} ;
+    CompAP ap = {s = \\_ => ap.s ! Pred} ;
 
     AdvVP vp adv =                --sleep here         -- VP -> Adv -> VP       
       vp ** {compl = \\a => vp.compl ! a ++ adv.s} ;  
@@ -133,13 +133,13 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
   UseN n = n ;
 
   -- funkar:
-  -- AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+  -- AdjCN ap cn = {     -- AP -> CN -> CN    "big house"              
   --   s = \\n,c => ap.s ! Attr (sgA Strong cn.g Nom) ++ cn.s ! n ! c;
   --   g = cn.g 
   -- } ; 
 
 -- funkar:
-  AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+  AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                
      s = \\n,c =>
       ap.s ! Attr (case n of {Pl => plA Strong c;  
                         Sg => sgA Strong cn.g c}) 
@@ -148,7 +148,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       } ; 
 
  -- funkar ej:
--- AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+-- AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                
 --      s = \\n,d,c =>
 --      ap.s ! Attr (case n of {Pl => plA Strong c; 
 --                        Sg => case d of {Strong => sgA Strong cn.g c}}) 
@@ -157,7 +157,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 --      } ; 
 
 -- funkar ej:
---    AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
+--    AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                
 --      s = \\n,d,c =>
 --      ap.s ! Attr (case n of {Pl => case d of {Strong => plA Strong c;        -- Adjective : Type = {s : UseAP => Str} ; 
 --                                        Weak => plA Weak c;              -- UseAP = Attr FormA | Pred ; -- FormA = sgA AForm Gender Case | plA AForm Case ;
