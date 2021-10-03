@@ -33,7 +33,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 	  } ++ vp.verb.s ! Pres np.n P3 ++ vp.compl ! Pred -- ÄNDRA TILL ATTR??
     };
 
-
     UseV v = {           --sleep      V --> VP      
     verb = v ;                      -- Verb : Type = {s : VForm => Str} ;   -- VForm = Inf | Pres Number Person ;
     compl = \\_ => [] ;             --  VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
@@ -83,7 +82,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
                                               Acc => "ein" } 
                       } ;
           n = Sg;
-          d = Mixed };          
+          af = Mixed };          
 
    aPl_Det = {s = table {
 		 _ => table {
@@ -91,7 +90,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
      }
     };
     n = Pl;
-    d = Strong
+    af = Strong
     };
 
   -----------------------
@@ -112,7 +111,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
                                 Dat => "dem" ;
                                 Acc => "das" }} ;
                 n = Sg;
-                d = Weak };
+                af = Weak };
 
       thePl_Det = {s = table {Masc => table 
                             {Nom => "die" ; 
@@ -130,7 +129,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
                             Dat => "den" ;
                             Acc => "die" }};
                 n = Pl;
-                d = Weak }; 
+                af = Weak }; 
 
   UseN n = n ;
 

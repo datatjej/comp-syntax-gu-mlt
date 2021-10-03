@@ -16,7 +16,7 @@ param
 oper
   --  define types:
   Noun: Type = {s : Number => Case => Str ; g : Gender};
-  Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
+  Determiner : Type = {s : Gender => Case => Str ; n : Number ; af : AForm};
 
   mkNoun : (sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen : Str) -> Gender -> Noun = 
     \sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen,g -> {
