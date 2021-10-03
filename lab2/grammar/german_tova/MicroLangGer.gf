@@ -15,8 +15,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Prep = {s : Str} ;
     V = Verb ;
     V2 = Verb2 ;
-    N = {s :   Number => Case => Str ; g : Gender};  
-    CN = {s :  Number => Case => Str ; g : Gender};
+    N,CN = Noun;
     NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
     Adv = {s : Str} ;
     A,AP,Comp = Adjective ;
