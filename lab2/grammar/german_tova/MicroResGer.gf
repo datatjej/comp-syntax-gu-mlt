@@ -24,7 +24,7 @@ oper
     \sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen,g -> {
     s = table {
       Sg => table {
-        Nom => sgNom ;
+        Nom => sgNom ; 
         Acc => sgAcc ;
         Dat => sgDat ;
         Gen => sgGen
@@ -83,60 +83,60 @@ oper
   Adjective : Type = {s : UseAP => Str} ;
 
   mkAdjective : Str -> Adjective =
-        \str_1 -> { s = table {
-    Attr (sgA Strong Masc Nom) => str_1 + "er" ;
-    Attr (sgA Strong Masc Gen)=> str_1 + "es" ;
-    Attr (sgA Strong Masc Dat)=> str_1 + "em" ;
-    Attr (sgA Strong Masc Acc) => str_1 + "en" ;
-    Attr (sgA Strong Fem Nom) => str_1 + "e" ;
-    Attr (sgA Strong Fem Gen) => str_1 + "er" ;
-    Attr (sgA Strong Fem Dat) => str_1 + "er" ;
-    Attr (sgA Strong Fem Acc) => str_1 + "e" ;
-    Attr (sgA Strong Neut Nom) => str_1 + "es" ;
-    Attr (sgA Strong Neut Gen) => str_1 + "es" ;
-    Attr (sgA Strong Neut Dat) => str_1 + "em" ;
-    Attr (sgA Strong Neut Acc) => str_1 + "es" ;
-    Attr (sgA Weak Masc Nom) => str_1 + "e" ;
-    Attr (sgA Weak Masc Gen)=> str_1 + "en" ;
-    Attr (sgA Weak Masc Dat)=> str_1 + "en" ;
-    Attr (sgA Weak Masc Acc) => str_1 + "en" ;
-    Attr (sgA Weak Fem Nom) => str_1 + "e" ;
-    Attr (sgA Weak Fem Gen) => str_1 + "en" ;
-    Attr (sgA Weak Fem Dat) => str_1 + "en" ;
-    Attr (sgA Weak Fem Acc) => str_1 + "e" ;
-    Attr (sgA Weak Neut Nom) => str_1 + "e" ;
-    Attr (sgA Weak Neut Gen) => str_1 + "en" ;
-    Attr (sgA Weak Neut Dat) => str_1 + "en" ;
-    Attr (sgA Weak Neut Acc) => str_1 + "e" ;
+        \adj -> { s = table {
+    Attr (sgA Strong Masc Nom) => adj + "er" ;
+    Attr (sgA Strong Masc Gen)=> adj + "es" ;
+    Attr (sgA Strong Masc Dat)=> adj + "em" ;
+    Attr (sgA Strong Masc Acc) => adj + "en" ;
+    Attr (sgA Strong Fem Nom) => adj + "e" ;
+    Attr (sgA Strong Fem Gen) => adj + "er" ;
+    Attr (sgA Strong Fem Dat) => adj + "er" ;
+    Attr (sgA Strong Fem Acc) => adj + "e" ;
+    Attr (sgA Strong Neut Nom) => adj + "es" ;
+    Attr (sgA Strong Neut Gen) => adj + "es" ;
+    Attr (sgA Strong Neut Dat) => adj + "em" ;
+    Attr (sgA Strong Neut Acc) => adj + "es" ;
+    Attr (sgA Weak Masc Nom) => adj + "e" ;
+    Attr (sgA Weak Masc Gen)=> adj + "en" ;
+    Attr (sgA Weak Masc Dat)=> adj + "en" ;
+    Attr (sgA Weak Masc Acc) => adj + "en" ;
+    Attr (sgA Weak Fem Nom) => adj + "e" ;
+    Attr (sgA Weak Fem Gen) => adj + "en" ;
+    Attr (sgA Weak Fem Dat) => adj + "en" ;
+    Attr (sgA Weak Fem Acc) => adj + "e" ;
+    Attr (sgA Weak Neut Nom) => adj + "e" ;
+    Attr (sgA Weak Neut Gen) => adj + "en" ;
+    Attr (sgA Weak Neut Dat) => adj + "en" ;
+    Attr (sgA Weak Neut Acc) => adj + "e" ;
     -- < MIXED sgA >
-    Attr (sgA Mixed Masc Nom) => str_1 + "er" ;
-    Attr (sgA Mixed Masc Gen)=> str_1 + "en" ;
-    Attr (sgA Mixed Masc Dat)=> str_1 + "en" ;
-    Attr (sgA Mixed Masc Acc) => str_1 + "en" ;
-    Attr (sgA Mixed Fem Nom) => str_1 + "e" ;
-    Attr (sgA Mixed Fem Gen) => str_1 + "en" ;
-    Attr (sgA Mixed Fem Dat) => str_1 + "en" ;
-    Attr (sgA Mixed Fem Acc) => str_1 + "e" ;
-    Attr (sgA Mixed Neut Nom) => str_1 + "es" ;
-    Attr (sgA Mixed Neut Gen) => str_1 + "en" ;
-    Attr (sgA Mixed Neut Dat) => str_1 + "en" ;
-    Attr (sgA Mixed Neut Acc) => str_1 + "es" ;
+    Attr (sgA Mixed Masc Nom) => adj + "er" ;
+    Attr (sgA Mixed Masc Gen)=> adj + "en" ;
+    Attr (sgA Mixed Masc Dat)=> adj + "en" ;
+    Attr (sgA Mixed Masc Acc) => adj + "en" ;
+    Attr (sgA Mixed Fem Nom) => adj + "e" ;
+    Attr (sgA Mixed Fem Gen) => adj + "en" ;
+    Attr (sgA Mixed Fem Dat) => adj + "en" ;
+    Attr (sgA Mixed Fem Acc) => adj + "e" ;
+    Attr (sgA Mixed Neut Nom) => adj + "es" ;
+    Attr (sgA Mixed Neut Gen) => adj + "en" ;
+    Attr (sgA Mixed Neut Dat) => adj + "en" ;
+    Attr (sgA Mixed Neut Acc) => adj + "es" ;
     --------------------------------
-    Attr (plA Strong Nom) => str_1 + "e" ;
-    Attr (plA Strong Gen) => str_1 + "er" ;
-    Attr (plA Strong Dat) => str_1 + "en" ;
-    Attr (plA Strong Acc) => str_1 + "e" ;
-    Attr (plA Weak Nom) => str_1 + "en" ;
-    Attr (plA Weak Gen) => str_1 + "en" ;
-    Attr (plA Weak Dat) => str_1 + "en" ;
-    Attr (plA Weak Acc) => str_1 + "en" ;
+    Attr (plA Strong Nom) => adj + "e" ;
+    Attr (plA Strong Gen) => adj + "er" ;
+    Attr (plA Strong Dat) => adj + "en" ;
+    Attr (plA Strong Acc) => adj + "e" ;
+    Attr (plA Weak Nom) => adj + "en" ;
+    Attr (plA Weak Gen) => adj + "en" ;
+    Attr (plA Weak Dat) => adj + "en" ;
+    Attr (plA Weak Acc) => adj + "en" ;
     -- < MIXED PlA>
-    Attr (plA Mixed Nom) => str_1 + "e" ;
-    Attr (plA Mixed Gen) => str_1 + "er" ;
-    Attr (plA Mixed Dat) => str_1 + "en" ;
-    Attr (plA Mixed Acc) => str_1 + "e" ;
+    Attr (plA Mixed Nom) => adj + "e" ;
+    Attr (plA Mixed Gen) => adj + "er" ;
+    Attr (plA Mixed Dat) => adj + "en" ;
+    Attr (plA Mixed Acc) => adj + "e" ;
     --------------------------
-    Pred => str_1
+    Pred => adj
   }} ;
 
 
