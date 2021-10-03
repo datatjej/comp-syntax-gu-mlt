@@ -218,5 +218,7 @@ oper
 
   be_Verb : Verb = mkVerb "sein" "bin" "bist" "ist" "sind" "seid" "sind";
 
+  Preposition : Type = {s : Str; c : Case} ;
+
 
 }

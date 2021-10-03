@@ -12,7 +12,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     Det = Determiner ;
-    Prep = {s : Str} ;
+    Prep = Preposition; -- {s : Str} ;
     V = Verb ;
     V2 = Verb2 ;
     N,CN = Noun;
@@ -172,11 +172,30 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 
     PositA a = a ;
 
-    PrepNP prep np = {s = prep.s ++ np.s ! Acc} ;
+    -- PrepNP prep np = {s = prep.s ++ np.s ! Acc} ;
 
-    in_Prep = {s = "in"} ;
-    on_Prep = {s = "auf"} ;
-    with_Prep = {s = "mit"} ;
+     PrepNP prep np = {
+      s = prep.s ++ np.s ! prep.c ; -- mit ihm: dat, auf ihn: acc
+      c = prep.c;
+      g = np.g ;
+      n = np.n ;
+      isPron = False
+      } ;
+
+    in_Prep = {
+      s = "in" ;
+      c = Dat ; 
+      } ;
+
+    on_Prep = {
+      s = "auf" ;
+      c = Acc ; 
+      } ;
+
+    with_Prep = {
+      s = "auf" ;
+      c = Dat ; 
+    } ;
 
     he_Pron = {
       s = table {Nom => "er" ; Acc => "ihn"; Dat => "ihm"; Gen => "seiner"} ;
@@ -330,7 +349,7 @@ oper
     = \s -> lin Adv {s = s} ;
   
   
-  mkPrep : Str -> Prep
-    = \s -> lin Prep {s = s} ;
+  mkPrep : Str -> Case -> Prep
+    = \s,c -> lin Prep {s = s; c = c} ;
 
 }
