@@ -9,49 +9,17 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     Utt = {s : Str} ;
     
     S  = {s : Str} ;
-    -- gammal: VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ; --hl
     VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
-    -- Adjective : Type = {s : UseAP => Str} ; -- UseAP = Attr FormA | Pred ; -- FormA = sgA AForm Gender Case | plA AForm Case ;
-   -- NP =  {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ; -- hl
     Pron = {s : Case => Str ; g : Gender ; n : Number } ;
     Det = Determiner ;
     Prep = {s : Str} ;
     V = Verb ;
-    V2 = Verb2 ; --transitive? 
-    N = {s :   Number => Case => Str ; g : Gender};      -- Noun: Type = {s : Number => Case => Str ; g : Gender};   Noun: Type = {s : AForm => Case => Str ; g : Gender ; n : Number};
+    V2 = Verb2 ;
+    N = {s :   Number => Case => Str ; g : Gender};  
     CN = {s :  Number => Case => Str ; g : Gender};
     NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
     Adv = {s : Str} ;
     A,AP,Comp = Adjective ;
-
-   
-
--- TYSKA 
--- N = {s : Adekl => Case => Str ; g : Gender ; n : Number} ; -- Adekl = st | sw | ge ;
--- CN = {s : Number => Case => Str ; g : Gender} ;
--- NP = {s : Case => Str ; g : Gender ; n : Number}
-
--- AFRIKANS
--- Noun = {s : Number => Case => Str ; g : Gender} ; -- NForm = NF Number Case ;
--- NP = {s : NPCase => Str ; a : Agr ; isPron : Bool}
-
--- saga
--- N  = {s : Number => Definiteness => Str ; g : Gender ; dec : Declension } ;
--- CN = Noun ** {isAdj : Bool} ;
--- NP = {s : Case => Str ; a : AdjForm} ;
-
--- ENGELSKA
--- Noun : {s : Number => Str} ;
--- CN = {s : Number => Str}
--- NP = {s : Case => Str ; a : Agreement} ;  -- Agreement = Agr Number ;
-
--- GF TYSKA:
--- Noun = {s : Number => Case => Str, g : Gender} ; 
--- NP = {s : PCase/Case => Str ; isPron : Bool }  -- PCase = NPC Case | NPP CPrep ; -- CPrep = 
-
-
-    --hl: Adjective : Type = {s : Gender => Number => Str ; isPre : Bool } ;
-    -- min: Adjective : Type = {s : UseAP => Str} ; --> Attr (sgA AForm Gender Case) | Pred;
 
   lin
     UttS s = s ;
@@ -66,75 +34,17 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     };
 
 
-  -- ENGELSKA:
-  -- PredVPS np vp = {
-  --    s = np.s ! Nom ++ vp.verb.s ! agr2vform np.a ++ vp.compl
-   --   } ;
-  
-  -- HERBERT:
-  -- PredVPS np vp = {
-  --    s = case np.isPron of { -- om NP är pronomen:
-	-- True => case np.n of { Sg => np.s ! Nom ; Pl => "" } ; --
-	-- False => np.det ++ np.s ! Nom
-	--  } ++
-	-- case vp.isPron of {
-	--  True => vp.compl ! np.g ! np.n ++ vp.verb.s ! Ind Present np.n P3 ;
-	--  False => 
-	--    vp.verb.s ! Ind Present np.n P3 ++ vp.compl ! np.g ! np.n
-	-- }
-  --    };
-
-    UseV v = {           --sleep      V --> VP      Verb : Type = {s : VForm => Str} ;   -- VForm = Inf | Pres Number Person ;
-    verb = v ;
+    UseV v = {           --sleep      V --> VP      
+    verb = v ;                      -- Verb : Type = {s : VForm => Str} ;   -- VForm = Inf | Pres Number Person ;
     compl = \\_ => [] ;             --  VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
     isPron = False 
     } ;
-
-    -- Saga
-    -- UseV s = {
-    -- verb = s ;              -- Verb : Type = {s: Str} ;
-    -- compl = \\_ => [] ;      VP = {verb : Verb ; compl : AdjForm => Str} ; -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
-    -- } ;
       
-  -- Herbert
-   -- UseV v = {       
-   --   verb = v ;  
-   --   compl = \\_,_ => [] ;          VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ;
-   --   isPron = False
-   --   } ;
-
-   -- Engelska:
-    -- UseV v = {
-    --  verb = v ;
-    --  compl = [] ;
-    --  } ;
-      
-     ComplV2 v2 np = {           -- V2 -> NP -> VP        -- love it                      
+    ComplV2 v2 np = {           -- V2 -> NP -> VP        -- love it                      
       verb = v2 ;                                         -- Verb2 : Type = Verb ** {c : Gender => Number => Str} ; 
       compl = \\_ => v2.c ++ np.s ! Acc;         -- NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
-      
-      isPron = np.isPron --;                              -- VP = {verb : Verb ; compl : UseAP => Str; isPron : Bool } ;
-	    --adv = []
+      isPron = np.isPron
 	   } ;
-
-    -- herbert 
-    --  ComplV2 v2 np = {
-    --  verb = v2 ;                                                        -- Verb2 : Type = Verb ** {c : Preposition } -- Verb : Type = {s : VForm => Str ; aux : Aux } ;
-    --  compl = \\_,_ => v2.c.con ! np.g ! np.n ++ np.det ++ np.s ! Acc ;  -- NP = {s : Case => Str ; det : Str ; g : Gender ; n : Number ; isPron : Bool } ;
-    --  isPron = np.isPron                                                 --  VP = {verb : Verb ; compl : Gender => Number => Str ; isPron : Bool } ;
-    --  } ;
-
-    -- engelska
-    --  ComplV2 v2 np = {
-    --  verb = v2 ;
-    --  compl = v2.c ++ np.s ! Acc  -- NP = {s : Case => Str ; a : Agreement} ;
-    --  } ;
-
-    -- saga
-    -- ComplV2 v2 np = {
-    -- verb = v2 ;                         -- Verb2 : Type = Verb ** {c : Str} ;
-    -- compl = \\_ => v2.c ++ np.s ! Acc   -- NP = {s : Case => Str ; a : AdjForm} ;   -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
-    --  } ;                                -- VP = = {verb : Verb ; compl : AdjForm => Str} ;
     
     UseComp comp = {
       verb = be_Verb ;
@@ -142,40 +52,10 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       isPron = False 
     };
 
-    -- UseComp comp = {             -- be small
-    --  verb = be_Verb ;     -- the verb is the copula "be"
-    --  compl = \\g,n => comp.s ! g ! n ;
-	  --  isPron = False ;
-	 --   adv = []
-    --} ;
-
-    -- herbert:
-    -- UseComp comp = {
-    --  verb = be_Verb ;     -- the verb is the copula "be"
-    --  compl = comp.s ;
-    --  isPron = False ;
-    --  } ;
-
     CompAP ap = {s = \\_ => ap.s ! Pred} ;  -- Afrikans lib/src/afrikaans/VerbAfr.gf:  CompAP ap = {s = \\_ => ap.s ! APred} ;
 
-
-    --AdvVP vp adv =
-    --  vp ** {compl = vp.compl ++ adv.s} ;
-
-    --AdvVP vp adv =
-    --vp ** {compl = \\g,n => vp.compl ! g ! n ++ adv.s} ;  
-
-    -- ENGELSKA:
-    -- AdvVP vp adv =
-    --  vp ** {compl = vp.compl ++ adv.s} ;
-
-    -- saga
-    AdvVP vp adv =                                          -- VP -> Adv -> VP       --sleep here
+    AdvVP vp adv =                --sleep here         -- VP -> Adv -> VP       
       vp ** {compl = \\a => vp.compl ! a ++ adv.s} ;  
-
-  -- Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
-  -- Noun: Type = {s : Number => Case => Str ; g : Gender};
-  -- NP = {s : Case => Str ; g : Gender ; n : Number; isPron : Bool} ; 
 
 
     DetCN det cn = {            -- Det -> CN -> NP ;
@@ -185,33 +65,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
     isPron = False
     } ;
 
-    -- gf ty: s = \\c => det.s ! cn.g ! c
-
-    --  lin DetCN det cn = {
-   -- s = \\c => det.s ! cn.g ! c ++ cn.s ! det.n ;
-   -- a = agr cn.g det.n Per3
-   -- }
-
-    -- herbert:               -- Det = {s : Gender => Str ; n : Number} ;  Noun : Type = {s : Number => Str ; g : Gender } ;
-    -- DetCN det cn = {  
-    --  s = \\c => cn.s ! det.n ;
-    --  det = det.s ! cn.g ;
-    --  n = det.n ;
-    --  g = cn.g ;
-    --  isPron = False 
-    --  } ;
-
-
-  -- afrikans:
-   --     DetCN det cn = {
-   --   s = \\c => det.s ! cn.g ++ cn.s ! det.a ! NF det.n Nom ; -- kan dalk vereenvoudig (2011-01-14)
-   --   a = agrP3 det.n ;
-   --   isPron = False
-   --   } ;
-
    UsePron p = p ** { det = "" ; isPron = True } ;
-
-  -- Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
    
   a_Det = {s = table {Masc => table          {Nom => "ein" ;
                                               Gen => "eines" ;
@@ -230,8 +84,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
                       } ;
           n = Sg;
           d = Mixed };          
-
-
 
    aPl_Det = {s = table {
 		 _ => table {
@@ -306,7 +158,7 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 --      g = cn.g 
 --      } ; 
 
-
+-- funkar ej:
 --    AdjCN ap cn = {     -- AP -> CN -> CN    "big house"                -- inspo: https://www.grammaticalframework.org/lib/doc/rgl-tutorial/index.html
 --      s = \\n,d,c =>
 --      ap.s ! Attr (case n of {Pl => case d of {Strong => plA Strong c;        -- Adjective : Type = {s : UseAP => Str} ; 
@@ -320,39 +172,6 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
 --      } ; 
 
 
--- herbert:
---  AdjCN ap cn = {
---      s = table {
---	      n => case ap.isPre of {                             -- AP = {s : Gender => Number => Str ; isPre : Bool } ;
---	   True => ap.s ! cn.g ! n ++ cn.s ! n ;
---	   False => cn.s ! n ++ ap.s ! cn.g ! n                   -- CN = {s : Number => Str ; g : Gender } ;
---	  }
---	};
---     g = cn.g
---     } ;
-
---  saga:
---    AdjCN ap cn = {
---      s = \\n,d =>
---      ap.s ! (case n of {Pl => AdjPl ;                                                        
---                          Sg => case d of {Def => AdjSg cn.g Def ;      -- Adjective : Type = {s : AdjForm => Str } ; -- AdjForm = AdjSg Gender Definiteness | AdjPl ;
---                                          Indef => AdjSg cn.g Indef}}) 
---                                          ++ cn.s ! n ! d ;             -- CN = {s : Number => Definiteness => Str ; g : Gender ; dec : Declension } ** {isAdj : Bool} ;
---
---      g = cn.g ;
---      dec = cn.dec ;
---      isAdj = True
---      } ; 
-
---Attr (sgA Strong Fem Gen) 
---FormA = sgA AForm Gender Case | plA AForm Case ;
--- saga: AdjForm = AdjSg Gender Definiteness | AdjPl ;
-
-  -- engelska:
-  --  AdjCN ap cn = {
-  --    s = table {n => ap.s ++ cn.s ! n}
-  --    } ;
-
     PositA a = a ;
 
     PrepNP prep np = {s = prep.s ++ np.s ! Acc} ;
@@ -365,19 +184,16 @@ concrete MicroLangGer of MicroLang = open MicroResGer, Prelude in {
       s = table {Nom => "er" ; Acc => "ihn"; Dat => "ihm"; Gen => "seiner"} ;
       g = Masc ;
       n = Sg
-      -- a = Agr Sg ;
       } ;
     she_Pron = {
       s = table {Nom => "sie" ; Acc => "sie"; Dat => "ihr"; Gen => "ihrer"} ;
       g = Masc ;
       n = Sg
-      --a = Agr Sg ;
       } ;
     they_Pron = {
       s = table {Nom => "sie" ; Acc => "sie"; Dat => "ihnen"; Gen => "ihrer"} ;
       g = Neut ;
       n = Pl
-      --a = Agr Pl ;
       } ;
 
 -----------------------------------------------------
@@ -479,33 +295,12 @@ lin young_A = mkA "jung" ;
 
 oper
 
--- engelska:
-  --mkN = overload {
-  --  mkN : Str -> Noun                                           -- predictable noun, e.g. car-cars, boy-boys, fly-flies, bush-bushes
-  --    = \n -> lin N (smartNoun n) ;
-  --  mkN : Str -> Str -> Noun                                          -- irregular noun, e.g. man-men
-  --    = \sg,pl -> lin N (mkNoun sg pl) ;
-  --  } ;
-
-  -- herbert italian
-   --mkN =  overload {
-   -- mkN : Str -> N                                                -- predictable noun
-   --   = \n -> lin N (smartNoun n) ;
-   -- mkN : Str -> Str -> Gender -> N                                   -- irregular noun
-   --   = \sg,pl,g -> lin N (mkNoun sg pl g) ;
-   -- } ;
-
   mkN = overload {
     mkN : Str ->  N 
       = \n -> lin N (smartNoun n) ;
     mkN : Str -> Str -> Str -> Str -> Str -> Str -> Str -> Str -> Gender -> N 
       = \sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen,g -> lin N (mkNoun sgNom sgAcc sgDat sgGen plNom plAcc plDat plGen g) ;
    };
-
-
-  -- engelska:
-  -- mkA : Str -> A
-  --  = \s -> lin A {s = s} ; 
 
   mkA = overload {
   mkA : Str -> A = \a -> lin A (mkAdjective a) ;
@@ -520,7 +315,6 @@ oper
     } ;
 
 
-
    mkV2 = overload {
     mkV2 : Str -> V2                                              -- predictable verb with direct object, e.g. "wash"
       = \s   -> lin V2 (smartVerb s ** {c = []}); -- {c = \\g, n => []}) ;
@@ -532,28 +326,7 @@ oper
       = \v,p -> lin V2 ( v ** {c = p}); --\\g, n => p}) ;
     } ;
 
--- HERBERT:  
- -- mkV2 = overload {
- --   mkV2 : Str -> V2 =
- --     \v -> lin V2 (smartVerb v) ** { c = emptyPreposition } ;
- --   mkV2 : V -> V2 =
- --     \v -> lin V2 (v ** { c = emptyPreposition });
- --   } ;
-
--- ENGELSKA:
---mkV2 = overload {
---mkV2 : Str -> V2          -- predictable verb with direct object, e.g. "wash"
---  = \s   -> lin V2 (smartVerb s ** {c = []}) ;
---mkV2 : Str  -> Str -> V2  -- predictable verb with preposition, e.g. "wait - for"
---  = \s,p -> lin V2 (smartVerb s ** {c = p}) ;
---mkV2 : V -> V2            -- any verb with direct object, e.g. "drink"-
---  = \v   -> lin V2 (v ** {c = []}) ;
---mkV2 : V -> Str -> V2     -- any verb with preposition
---  = \v,p -> lin V2 (v ** {c = p}) ;
--- } ;
-
-
--- --------------------------------------------------
+-----------------------------------------------------
 
   mkAdv : Str -> Adv
     = \s -> lin Adv {s = s} ;

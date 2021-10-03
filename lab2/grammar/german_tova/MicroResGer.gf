@@ -15,9 +15,7 @@ param
 
 oper
   --  define types:
-
   Noun: Type = {s : Number => Case => Str ; g : Gender};
-
   Determiner : Type = {s : Gender => Case => Str ; n : Number ; d : AForm};
 
   mkNoun : (sgNom,sgAcc,sgDat,sgGen,plNom,plAcc,plDat,plGen : Str) -> Gender -> Noun = 
@@ -96,6 +94,7 @@ oper
     Attr (sgA Strong Neut Gen) => adj + "es" ;
     Attr (sgA Strong Neut Dat) => adj + "em" ;
     Attr (sgA Strong Neut Acc) => adj + "es" ;
+        -- < WEAK sgA >
     Attr (sgA Weak Masc Nom) => adj + "e" ;
     Attr (sgA Weak Masc Gen)=> adj + "en" ;
     Attr (sgA Weak Masc Dat)=> adj + "en" ;
@@ -219,9 +218,5 @@ oper
 
   be_Verb : Verb = mkVerb "sein" "bin" "bist" "ist" "sind" "seid" "sind";
 
--- Preposition : Type = {s : Str ; con : Gender => Number => Str} ;
-
-
---}
 
 }
