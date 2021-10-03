@@ -307,7 +307,7 @@ oper
   } ;
 
    mkV = overload {
-    mkV : (inf : Str) -> V  -- predictable verbs, e.g. "sehen"
+    mkV : (inf : Str) -> V  -- predictable verbs, e.g. "gehen"
       = \s -> lin V (smartVerb s) ;
     mkV : (inf,sg1,sg2,sg3,pl1,pl2,pl3: Str) -> V  -- irregular verbs, or verbs with umlaut, or verbs with sein as auxiliary verb 
       = \inf,sg1,sg2,sg3,pl1,pl2,pl3 -> lin V (irregVerb inf sg1 sg2 sg3 pl1 pl2 pl3) ;
